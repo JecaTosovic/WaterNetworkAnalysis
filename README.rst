@@ -1,4 +1,4 @@
-ConservedWaterSearch
+WaterNetworkAnalysis
 ==============================
 .. image:: https://readthedocs.org/projects/waternetworkanalysis/badge/?version=latest
 
