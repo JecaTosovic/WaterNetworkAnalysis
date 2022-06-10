@@ -21,7 +21,7 @@ except:
 
 setup(
     # Self-descriptive entries which should always be present
-    name="waternetworknalysis",
+    name="WaterNetworkAnalysis",
     # version=0.0.1,
     author="Domagoj Fijan, Jelena Tosovic, Marko Jukic, Urban Bren",
     author_email="jecat_90@live.com",
@@ -63,10 +63,14 @@ setup(
     # Additional entries you may want simply uncomment the lines you want and fill in the data
     # url='http://www.my_package.com',  # Website
     install_requires=[
-        "numpy",
+        "conservedwatersearch",
         "hdbscan>=0.8.28",
         "matplotlib",
+        "MDAnalysis",
+        "numpy",
         "scikit-learn",
+        "nglview",
+        "wget",
     ],  # Required packages, pulls from pip if needed; do not use for Conda deployment
     # platforms=['Linux',
     #            'Mac OS-X',
