@@ -1,5 +1,5 @@
 """
-surfacewaternetworkanalysis.py
+WaterNetowrkAnalysis.py
 Module for analysis of surface water networks near protein active sites.
 
 Handles the primary functions
@@ -26,7 +26,7 @@ from conservedwatersearch.hydrogen_orientation import *
 from conservedwatersearch.utils import *
 
 
-class swanalysis:
+class WaterNetworkAnalysis:
     """
     Main class for surface water analysis. Contains functions for surface water analysis workflow which usually consists of a) finding waters by first alligning a given trajectory and selecting relevent waters; b) preforming anaylisis such as clustering of water networks of selected waters.
 
