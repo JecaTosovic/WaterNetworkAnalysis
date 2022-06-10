@@ -1,4 +1,5 @@
 hdbscan>=0.8.28
+conservedwatersearch
 matplotlib
 numpy
 scikit-learn
