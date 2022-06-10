@@ -1,6 +1,6 @@
 """
-ConservedWaterSearch
-Module for identification of conserved water molecules from MD trajectories.
+WaterNetworkAnalysis
+Set of tools for input preparation for conserved water search from MD trajectories (gromacs, amber) and their analysis
 """
 import sys
 
@@ -21,14 +21,14 @@ except:
 
 setup(
     # Self-descriptive entries which should always be present
-    name="conservedwatersearch",
+    name="waternetworknalysis",
     # version=0.0.1,
     author="Domagoj Fijan, Jelena Tosovic, Marko Jukic, Urban Bren",
     author_email="jecat_90@live.com",
     description=short_description[0],
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    license="BSD-3-Clause",
+    license="License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     keywords=("simulation analysis molecular dynamics biosimulation conserved water "),
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -41,13 +41,13 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    url="https://github.com/JecaTosovic/ConservedWaterSearch",
-    download_url="https://pypi.org/project/ConservedWaterSearch/",
+    url="https://github.com/JecaTosovic/WaterNetworkAnalysis",
+    download_url="https://pypi.org/project/WaterNetworkAnalysis/",
     project_urls={
-        "Homepage": "https://github.com/JecaTosovic/ConservedWaterSearch",
-        "Documentation": "https://ConservedWaterSearch.readthedocs.io/",
-        "Source Code": "https://github.com/JecaTosovic/ConservedWaterSearch",
-        "Issue Tracker": "https://github.com/JecaTosovic/ConservedWaterSearch/issues",
+        "Homepage": "https://github.com/JecaTosovic/WaterNetworkAnalysis",
+        "Documentation": "https://WaterNetworkAnalysis.readthedocs.io/",
+        "Source Code": "https://github.com/JecaTosovic/WaterNetworkAnalysis",
+        "Issue Tracker": "https://github.com/JecaTosovic/WaterNetworkAnalysis/issues",
     },
     python_requires=">=3.6",
     # Which Python importable modules should be included when your package is installed
