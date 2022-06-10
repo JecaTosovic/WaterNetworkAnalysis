@@ -1,5 +1,5 @@
 Welcome to WaterNetworkAnalysis's documentation!
-===============================
+================================================
 
 .. include:: ../../README.rst
 

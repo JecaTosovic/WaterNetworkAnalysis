@@ -1,4 +1,4 @@
-conservedwatersearch
+WaterNetworkAnalysis
 ===========================
 
 .. toctree::
