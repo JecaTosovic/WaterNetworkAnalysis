@@ -8,6 +8,7 @@ WaterNetworkAnalysis
 The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input preparation for `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`_ python package from MD trajectories and their analysis.
 Using the ConservedWaterSearch package the conserved water molecules can be further classified into 3 distinct conserved water types based on their hydrogen orientation: Fully Conserved Waters (FCW), Half Conserved Waters (HCW) and Weakly conserved waters (WCW) - see figure below for examples.
 WNA can be used to create PyMol or nglview visualisations of conserved water networks for drug discovery or materials science purposes.
+
 .. image:: figs/WaterTypes.png
   :width: 600
 
