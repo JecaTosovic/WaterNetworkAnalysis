@@ -63,7 +63,7 @@ setup(
     # Additional entries you may want simply uncomment the lines you want and fill in the data
     # url='http://www.my_package.com',  # Website
     install_requires=[
-        "conservedwatersearch",
+        "ConservedWaterSearch",
         "hdbscan>=0.8.28",
         "matplotlib",
         "MDAnalysis",

@@ -1,4 +1,4 @@
-conservedwatersearch
+ConservedWaterSearch
 hdbscan>=0.8.28
 matplotlib
 MDAnalysis
