@@ -21,9 +21,9 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import OPTICS, KMeans, cluster_optics_dbscan, cluster_optics_xi
 
-import conservedwatersearch
-from conservedwatersearch.hydrogen_orientation import *
-from conservedwatersearch.utils import *
+import ConservedWaterSearch
+from ConservedWaterSearch.hydrogen_orientation import *
+from ConservedWaterSearch.utils import *
 
 
 class WaterNetworkAnalysis:
