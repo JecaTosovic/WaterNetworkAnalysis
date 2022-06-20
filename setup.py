@@ -22,7 +22,7 @@ except:
 setup(
     # Self-descriptive entries which should always be present
     name="WaterNetworkAnalysis",
-    # version=0.0.1,
+    version=0.0.1,
     author="Domagoj Fijan, Jelena Tosovic, Marko Jukic, Urban Bren",
     author_email="jecat_90@live.com",
     description=short_description[0],
@@ -72,10 +72,11 @@ setup(
         "nglview",
         "wget",
     ],  # Required packages, pulls from pip if needed; do not use for Conda deployment
-    # platforms=['Linux',
-    #            'Mac OS-X',
-    #            'Unix',
-    #            'Windows'],            # Valid platforms your code works on, adjust to your flavor
+    platforms=['Linux',
+                'Mac OS-X',
+                'Unix',
+                'Windows'
+              ],            # Valid platforms your code works on, adjust to your flavor
     # Manual control if final package is compressible or not, set False to prevent the .egg from being made
     zip_safe=False,
 )
