@@ -64,12 +64,8 @@ setup(
     # url='http://www.my_package.com',  # Website
     install_requires=[
         "ConservedWaterSearch",
-        "hdbscan>=0.8.28",
-        "matplotlib",
         "MDAnalysis",
         "numpy",
-        "scikit-learn",
-        "nglview",
         "wget",
     ],  # Required packages, pulls from pip if needed; do not use for Conda deployment
     platforms=['Linux',
