@@ -66,7 +66,7 @@ def get_selection_string_from_resnums(
 
 def get_center_of_selection(
     selection: str, trajectory: str, topology: str | None = None
-) -> NDArray[np.float_]:
+) -> np.ndarray:
     """Computes centre of selection with MDAnalysis.
 
     Calculates coordinates in xyz of the centre of selection using
@@ -80,7 +80,7 @@ def get_center_of_selection(
             None.
 
     Returns:
-        NDArray[np.float_]: returns array that contains coordinates of
+        np.ndarray: returns array that contains coordinates of
             center of selection
 
     Example::
@@ -98,7 +98,7 @@ def get_center_of_selection(
 
 
 def calculate_oxygen_density_map(
-    selection_center: NDArray[np.float_],
+    selection_center: np.ndarray,
     trajectory: str,
     topology: str | None = None,
     dist: float = 12.0,
@@ -112,7 +112,7 @@ def calculate_oxygen_density_map(
     Generate oxygen density maps using MDAnalysis.
 
     Args:
-        selection_center (NDArray[np.float_]): center of selection
+        selection_center (np.ndarray): center of selection
             around which waters will be selected.
         trajectory (str): trajectory filename.
         topology (str | None, optional): Topology filename if available.
@@ -167,9 +167,9 @@ def calculate_oxygen_density_map(
 
 def make_results_pdb_MDA(
     water_type: list[str],
-    waterO: NDArray[np.float_],
-    waterH1: NDArray[np.float_],
-    waterH2: NDArray[np.float_],
+    waterO: np.ndarray,
+    waterH1: np.ndarray,
+    waterH2: np.ndarray,
     output_fname: str,
     protein_file: str | None = None,
     ligand_name: str | None = None,
@@ -188,11 +188,11 @@ def make_results_pdb_MDA(
 
     Args:
         water_type (list[str]): List of water types.
-        waterO (NDArray[np.float_]): numpy array containing coordinates
+        waterO (np.ndarray): numpy array containing coordinates
             of conserved waters' oxygens.
-        waterH1 (NDArray[np.float_]): numpy array containing coordinates
+        waterH1 (np.ndarray): numpy array containing coordinates
             of conserved waters' first hydrogen
-        waterH2 (NDArray[np.float_]): numpy array containing coordinates
+        waterH2 (np.ndarray): numpy array containing coordinates
             of conserved waters' second hydrogen
         output_fname (str): name of the output pdb file. Must end in '.pdb'.
         protein_file (str | None, optional): file which contains protein
@@ -203,15 +203,16 @@ def make_results_pdb_MDA(
             If None no ligand is saved. Defaults to None.
         mode (str, optional): mode in which conserved waters will be
             saved. Options:
-                "SOL" - default mode. Saves water molecules as SOL so that
-                visualisation softwares can recognise them as waters. No
-                distinction is made between different types of conserved
-                waters.
-                "cathegorise" - cathegorises the waters according to
-                hydrogen orienation into fully conserved (FCW),
-                half-coserved (HCW) and weakly conserved (WCW). This mode
-                makes visualisers not able to recognise the waters as
-                water/sol but usefull for interpreting results.
+
+                - "SOL" - default mode. Saves water molecules as SOL so that
+                  visualisation softwares can recognise them as waters. No
+                  distinction is made between different types of conserved
+                  waters.
+                - "cathegorise" - cathegorises the waters according to
+                  hydrogen orienation into fully conserved (FCW),
+                  half-coserved (HCW) and weakly conserved (WCW). This mode
+                  makes visualisers not able to recognise the waters as
+                  water/sol but usefull for interpreting results.
 
 
     Example::
@@ -240,7 +241,7 @@ def make_results_pdb_MDA(
     n_residues: int = len(water_type)
     n_atoms: int = n_residues * 3
     # create resindex list
-    resindices: NDArray[np.int_] = np.repeat(range(n_residues), 3)
+    resindices: np.ndarray = np.repeat(range(n_residues), 3)
     # all water molecules belong to 1 segment
     segindices: list[int] = [0] * n_residues
     waters = mda.Universe.empty(
@@ -305,7 +306,7 @@ def make_results_pdb_MDA(
 
 
 def extract_waters_from_trajectory(
-    selection_center: NDArray[np.float_],
+    selection_center: np.ndarray,
     trajectory: str,
     topology: str | None = None,
     dist: float = 12.0,
@@ -314,7 +315,7 @@ def extract_waters_from_trajectory(
     HW1: str = "HW1",
     HW2: str = "HW2",
     save_file: str | None = None,
-) -> tuple[NDArray[np.float_], NDArray[np.float_], NDArray[np.float_]]:
+) -> tuple[np.ndarray]:
     """Extracts waters for clustering analysis.
 
     Calculates water (oxygen and hydrogen) coordinates for all the
@@ -322,7 +323,7 @@ def extract_waters_from_trajectory(
     clustering. The trajectory should be aligned previously.
 
     Args:
-        selection_center (NDArray[np.float_]): coordinates of selection
+        selection_center (np.ndarray): coordinates of selection
             center around which waters will be selected.
         trajectory (str): Trajectory file name.
         topology (str | None, optional): Topology file name. Defaults to None.
@@ -339,8 +340,8 @@ def extract_waters_from_trajectory(
             be saved. If none doesn't save to a file. Defaults to None.
 
     Returns:
-        tuple[NDArray[np.float_], NDArray[np.float_],
-        NDArray[np.float_]]: returns xyz numpy arrays that contain
+        tuple[np.ndarray, np.ndarray]:
+            returns xyz numpy arrays that contain
             coordinates of oxygens, hydrogen 1 and hydrogen 2
 
     Example::
@@ -393,7 +394,7 @@ def extract_waters_from_trajectory(
                 coordsH.append(j)
         for i, j in zip(Os.positions, Os.indices):
             coordsO.append(i)
-    Odata: NDArray[np.float_] = np.asarray(coordsO)
+    Odata: np.ndarray = np.asarray(coordsO)
     coordsH = np.asarray(coordsH)
     Opos, H1, H2 = get_orientations_from_positions(Odata, coordsH)
     # SAVEs full XYZ coordinates, not O coordinates and h orientations!!!!!
@@ -686,7 +687,7 @@ def align_trajectory(
 
 
 def align_and_extract_waters(
-    center_for_water_selection: NDArray[np.float_],
+    center_for_water_selection: np.ndarray,
     trajectory: str,
     aligned_trajectory_filename: str,
     align_target_file_name: str,
@@ -701,7 +702,7 @@ def align_and_extract_waters(
     OW: str = "OW",
     HW1: str = "HW1",
     HW2: str = "HW2",
-) -> tuple[NDArray[np.float_], NDArray[np.float_], NDArray[np.float_]]:
+) -> tuple[np.ndarray]:
     """Convenience function - aligns and extracts waters from
     trajectory.
 
@@ -711,7 +712,7 @@ def align_and_extract_waters(
     water molecules for water clustering analysis.
 
     Args:
-        center_for_water_selection (NDArray[np.float_]): Coordiantes
+        center_for_water_selection (np.ndarray): Coordiantes
             around which all water molecules inside a radius ``dist``
             will be seleceted for water clustering analysis.
         trajectory (str): File name of the trajectory from which waters
@@ -754,8 +755,8 @@ def align_and_extract_waters(
             will be saved. If none doesn't save to a file. Defaults to None.
 
     Returns:
-        tuple[NDArray[np.float_], NDArray[np.float_],
-        NDArray[np.float_]]: Returns coordinates of oxygen atoms, first
+        tuple[np.ndarray, np.ndarray]: 
+            Returns coordinates of oxygen atoms, first
             hydrogen atom and second hydrogen atom in three seperate numpy
             arrays. Each row in each array makes up coordinates of a single
             water molecule.
@@ -819,15 +820,16 @@ def read_results_and_make_pdb(
             (pdb prefered). Defaults to None.
         mode (str, optional): mode in which conserved waters will
             besaved. Options:
-                "SOL" - default mode. Saves water molecules as SOL so that
-                visualisation softwares can recognise them as waters. No
-                distinction is made between different types of conserved
-                waters.
-                "cathegorise" - cathegorises the waters according to
-                hydrogen orienation into fully conserved (FCW),
-                half-coserved (HCW) and weakly conserved (WCW). This mode
-                makes visualisers not able to recognise the waters as
-                water/sol but usefull for interpreting results.
+
+                - "SOL" - default mode. Saves water molecules as SOL so that
+                  visualisation softwares can recognise them as waters. No
+                  distinction is made between different types of conserved
+                  waters.
+                - "cathegorise" - cathegorises the waters according to
+                  hydrogen orienation into fully conserved (FCW),
+                  half-coserved (HCW) and weakly conserved (WCW). This mode
+                  makes visualisers not able to recognise the waters as
+                  water/sol but usefull for interpreting results.
 
     Example::
 
