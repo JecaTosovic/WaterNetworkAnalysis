@@ -5,7 +5,6 @@ WaterNetworkAnalysis
 .. image:: https://badge.fury.io/py/WaterNetworkAnalysis.svg
     :target: https://badge.fury.io/py/WaterNetworkAnalysis
 
-
 The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input preparation for `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`_ python package which identifies conserved water molecules from Molecular Dynamics (MD) trajectories.
 
 .. image:: figs/Scheme.png
@@ -14,21 +13,21 @@ The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input
 WNA can also be used to create PyMol or nglview visualisations of conserved water networks for drug discovery or materials science purposes.
 
 Important links
-===============
+---------------
 	- `Documentation <https://waternetworkanalysis.readthedocs.io/en/latest/>`_: hosted on Read The Docs
 	- `GitHub repository <https://github.com/JecaTosovic/WaterNetworkAnalysis>`_: source code/contribute code
 	- `Issue tracker <https://github.com/JecaTosovic/WaterNetworkAnalysis/issues>`_: Report issues/ request features
 
 Related Tools
-=============
+-------------
 	- `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`_: Analysis of conserved waters from simulation trajectories. For docs see `here <https://conservedwatersearch.readthedocs.io/en/latest/>`_.
 
 Citation
-========
+--------
 For citations and more infromation see `ConservedWaterSearch citation <https://conservedwatersearch.readthedocs.io/en/latest/citing.html>`_.
 
 Installation
-============
+------------
 The easiest ways to install **WaterNetworkAnalysis** is using pip:
 
 .. code:: bash
@@ -39,7 +38,7 @@ Conda builds will be available soon.
 
 
 Example
-=======
+-------
 The following example shows how to use **WaterNetworkAnalysis** to prepare a MD trajectory and analyse the results for determination of conserved water networks.
 
 .. code:: python
@@ -81,5 +80,5 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
 
 
 
-.. image:: docs/source/figs/Results.png
+.. image:: figs/Results.png
   :width: 600
