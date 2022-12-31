@@ -80,8 +80,8 @@ def get_center_of_selection(
             None.
 
     Returns:
-        np.ndarray: returns array that contains coordinates of
-            center of selection
+        np.ndarray: 
+            returns array that contains coordinates of center of selection
 
     Example::
 
@@ -539,7 +539,7 @@ def align_trajectory(
     protein is aligned by default. To select the align reference state
     either select an integer for ``align_target`` and specify a file name to
     which the align target will be saved to with ``align_target_file_name``
-    OR set align_target to ``None`` and align_target_file_name will be read
+    OR set align_target to ``None`` and ``align_target_file_name`` will be read
     and used as align target.
 
     Args:
@@ -708,8 +708,8 @@ def align_and_extract_waters(
 
     Aligns the trajectory first and then extracts water molecules for
     further water clustering analysis. If trajectory has already been
-    aligned, one can use ``extract_Waters_from_trajectory`` to extract the
-    water molecules for water clustering analysis.
+    aligned, one can use :py:meth:`extract_waters_from_trajectory` to
+    extract the water molecules for water clustering analysis.
 
     Args:
         center_for_water_selection (np.ndarray): Coordiantes
@@ -720,9 +720,9 @@ def align_and_extract_waters(
         aligned_trajectory_filename (str): File name to which aligned
             trajectory will be saved.
         align_target_file_name (str): File name for saving the align
-        target (usually pdb) if ``align_target`` is ``int``. If align
-        target is ``None``, the align target will be read from this file
-            instead!
+            target (usually pdb) if ``align_target`` is ``int``. If
+            align target is ``None``, the align target will be read
+            from this file instead!
         topology (str | None, optional): Topology file name. Defaults
             to ``None``.
         every (int, optional): Take every ``every`` snapshot instead of
