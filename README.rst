@@ -8,7 +8,7 @@ WaterNetworkAnalysis
 
 The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input preparation for `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`_ python package which identifies conserved water molecules from Molecular Dynamics (MD) trajectories.
 
-.. image:: figs/Scheme.png
+.. image:: docs/source/figs/Scheme.png
   :width: 600
 
 WNA can also be used to create PyMol or nglview visualisations of conserved water networks for drug discovery or materials science purposes.
@@ -37,6 +37,13 @@ The easiest ways to install **WaterNetworkAnalysis** is using pip:
 
 Conda builds will be available soon.
 
+WNA depends on ConservedWaterSearch (CWS). To utilize full visualisation capabilities of CWS, `pymol <https://pymol.org/2/>`_ should be installed. Easiest way to install pymol is via ``conda``:
+
+.. code:: bash
+
+   conda install -c conda-forge pymol-open-source
+
+For more information see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
 
 Example
 =======
@@ -44,40 +51,46 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
 
 .. code:: python
 
-   from WaterNetworkAnalysis import WaterNetworkAnalysis as WNA
-   import os
+   from WaterNetworkAnalysis import align_trajectory, get_center_of_selection,get_selection_string_from_resnums,extract_waters_from_trajectory
+   from ConservedWaterSearch.water_clustering import WaterClustering
+   from ConservedWaterSearch.utils import get_orientations_from_positions
+   
    # MD trajectory filename
-   trajectory="md_pl.xtc"
+   trajectory="md.xtc"
    # topology filename
-   topology="md_pl.gro"
-   # ligand name
-   ligand = 'SLB'
+   topology="md.gro"
+   # aligned trajectory filename
+   alignedtrj = "aligned_trj.xtc"
+   # aligned snapshot filename
+   aligned_snap = "aligned.pdb"
    # distance to select water molecules around
-   distance = 15.0
+   distance = 12.0
+   # align the trajectory and save the alignment reference configuration
+   align_trajectory(
+       trajectory=trj,
+       topology=top,
+       align_target_file_name=aligned_snap,
+       output_trj_file=alignedtrj,
+   )
    # define active site by aminoacid residue numbers
-   active_site_aminoacids = [10,11,124,127,147,149,150,151,153,154,168,169,17,170,173,187,188,191,197,212,214,49,65,66,67,69,70,72]
-   analysis=WNA(aminoacids_in_activesite=active_site_aminoacids)
-   # if trajectory is not aligned align it and extract water molecules inside 15 A around active site
-   if not os.isfile('aligned_trajectory.xtc'):
-       analysis.align_trajectory(trajectory, topology,every=10)
-       analysis.extract_waters_from_trajectory(topologyology=topology, dist=distance)
-   elif not os.isfile('water_coordinates.dat'):
-       analysis.extract_waters_from_trajectory(traj='aligned_trajectory.xtc',topologyology=topology, dist=distance)
-   else:
-       analysis.load_H2O(fname='water_coordinates.dat')
-   # If the procedure hasn't started start it, else restart it or if finished load results
-   if not os.isfile('Clustering_results.dat'):
-        if not os.isfile('Clustering_results_temp.dat'):
-            analysis.cluster()
-        else:
-            analysis.restart_cluster()
-   else:
-       analysis.read_results()
-   # Make results in pdb file
-   analysis.make_results_pdb("aligned.pdb",ligand,mode="cathegorise")
-   analysis.make_results_pdb("aligned.pdb",ligand)
-   # create a PyMol visualisation session
-   analysis.visualise_pymol()
+   active_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
+   # find centre of the active site in aligned trajectory
+   selection_centre = get_center_of_selection(
+       get_selection_string_from_resnums(active_site_resnums),
+       trajectory=alignedtrj,
+       topology=top,
+   )
+   # extract water coordinates of interest around selection centre
+   coordO, coordH =  extract_waters_from_trajectory(
+       trajectory=alignedtrj, topology=top, selection_center=selection_centre, dist=distance
+   )
+   # start the clustering procedure
+   Nsnaps = 200
+   WC=WaterClustering(nsnaps= Nsnaps)
+   # perform multi stage reclustering
+   WC.multi_stage_reclustering(*get_orientations_from_positions(coordO,coordH))
+   # visualise results with pymol
+   WC.visualise_pymol(aligned_snap, active_site_ids=active_site_resnums, dist=distance)
 
 
 
