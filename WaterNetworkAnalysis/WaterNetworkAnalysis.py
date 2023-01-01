@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import stat
+from warnings import WarningMessage
 
 import MDAnalysis as mda
 import numpy as np
@@ -314,7 +315,7 @@ def extract_waters_from_trajectory(
     HW1: str = "HW1",
     HW2: str = "HW2",
     save_file: str | None = None,
-) -> tuple[np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Extracts waters for clustering analysis.
 
     Calculates water (oxygen and hydrogen) coordinates for all the
@@ -340,14 +341,14 @@ def extract_waters_from_trajectory(
 
     Returns:
         tuple[np.ndarray, np.ndarray]:
-            returns xyz numpy arrays that contain
-            coordinates of oxygens, hydrogen 1 and hydrogen 2
+            returns xyz numpy arrays that contain coordinates of oxygens,
+            and combined array of hydrogen 1 and hydrogen 2
 
     Example::
 
         # Generate water coordinates for clustering analysis
         resids = [8,12,143,144]
-        extract_waters_from_trajectory(
+        coordO, coordH = extract_waters_from_trajectory(
             get_center_of_selection(get_selection_string_from_resnums(resids)),
             trajectory = 'trajectory.xtc',
             topology = 'topology.tpr'
@@ -376,22 +377,23 @@ def extract_waters_from_trajectory(
             + " "
             + str(dist)
         )
-        for i in Os.indices:
+        for i, j in zip(Os.positions, Os.indices):
             Hs = u.select_atoms(
                 "(name "
                 + str(HW1)
                 + " or name "
                 + str(HW2)
                 + ") and around 1.0 index "
-                + str(i)
+                + str(j)
             )
             if len(Hs) != 2:
-                raise Exception(
-                    f"Water {k} in snapshot {i} has too many hydrogens ({len(Hs)})."
-                )
-            for j in Hs.positions:
-                coordsH.append(j)
-        for i, j in zip(Os.positions, Os.indices):
+                #raise Exception(
+                #    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
+                #)
+                print(f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)}). Skipping.")
+                continue
+            for l in Hs.positions:
+                coordsH.append(l)
             coordsO.append(i)
     Odata: np.ndarray = np.asarray(coordsO)
     coordsH = np.asarray(coordsH)
@@ -399,7 +401,7 @@ def extract_waters_from_trajectory(
     # SAVEs full XYZ coordinates, not O coordinates and h orientations!!!!!
     if save_file is not None:
         np.savetxt(save_file, np.c_[Opos, H1, H2])
-    return Odata, H1, H2
+    return Odata, coordsH
 
 
 def __align_mda(
