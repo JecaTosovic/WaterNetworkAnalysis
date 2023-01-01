@@ -5,7 +5,6 @@ import stat
 
 import MDAnalysis as mda
 import numpy as np
-from numpy.typing import NDArray as NDArray
 
 from ConservedWaterSearch.utils import (
     get_orientations_from_positions,
@@ -80,7 +79,7 @@ def get_center_of_selection(
             None.
 
     Returns:
-        np.ndarray: 
+        np.ndarray:
             returns array that contains coordinates of center of selection
 
     Example::
@@ -755,7 +754,7 @@ def align_and_extract_waters(
             will be saved. If none doesn't save to a file. Defaults to None.
 
     Returns:
-        tuple[np.ndarray, np.ndarray]: 
+        tuple[np.ndarray, np.ndarray]:
             Returns coordinates of oxygen atoms, first
             hydrogen atom and second hydrogen atom in three seperate numpy
             arrays. Each row in each array makes up coordinates of a single
