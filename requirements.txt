@@ -1,4 +1,4 @@
 ConservedWaterSearch
-numpy
+numpy<1.24
 MDAnalysis
 wget

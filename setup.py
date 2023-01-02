@@ -65,7 +65,7 @@ setup(
     install_requires=[
         "ConservedWaterSearch",
         "MDAnalysis",
-        "numpy",
+        "numpy<1.24",
         "wget",
     ],  # Required packages, pulls from pip if needed; do not use for Conda deployment
     platforms=['Linux',
