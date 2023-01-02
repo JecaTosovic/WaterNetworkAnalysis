@@ -50,7 +50,10 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
 
 .. code:: python
 
-   from WaterNetworkAnalysis import align_trajectory, get_center_of_selection,get_selection_string_from_resnums,extract_waters_from_trajectory
+   from WaterNetworkAnalysis import align_trajectory
+   from WaterNetworkAnalysis import get_center_of_selection
+   from WaterNetworkAnalysis import get_selection_string_from_resnums
+   from WaterNetworkAnalysis import extract_waters_from_trajectory
    from ConservedWaterSearch.water_clustering import WaterClustering
    from ConservedWaterSearch.utils import get_orientations_from_positions
    
