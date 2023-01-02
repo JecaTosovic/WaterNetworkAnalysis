@@ -67,8 +67,8 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
    distance = 12.0
    # align the trajectory and save the alignment reference configuration
    align_trajectory(
-       trajectory=trj,
-       topology=top,
+       trajectory=trajectory,
+       topology=topology,
        align_target_file_name=aligned_snap,
        output_trj_file=alignedtrj,
    )
@@ -78,11 +78,14 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
    selection_centre = get_center_of_selection(
        get_selection_string_from_resnums(active_site_resnums),
        trajectory=alignedtrj,
-       topology=top,
+       topology=topology,
    )
    # extract water coordinates of interest around selection centre
    coordO, coordH =  extract_waters_from_trajectory(
-       trajectory=alignedtrj, topology=top, selection_center=selection_centre, dist=distance
+       trajectory=alignedtrj,
+       topology=topology, 
+       selection_center=selection_centre, 
+       dist=distance
    )
    # start the clustering procedure
    Nsnaps = 200

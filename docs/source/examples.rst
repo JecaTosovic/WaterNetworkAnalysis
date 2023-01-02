@@ -24,8 +24,8 @@ To compute conserved waters from MD trajectories one has to first align the whol
    distance = 12.0
    # align the trajectory and save the alignment reference configuration
    align_trajectory(
-       trajectory=trj,
-       topology=top,
+       trajectory=trajectory,
+       topology=topology,
        align_target_file_name=aligned_snap,
        output_trj_file=alignedtrj,
    )
@@ -126,7 +126,7 @@ For convenience one can perform alignment and extraction of water molecules in a
    # align the trajectory, save the alignment reference configuration and extract relevent waters
    coordO, coordH = align_and_extract_waters(
        selection_centre, 
-       trj, 
+       trajectory, 
        alignedtrj, 
        aligned_snap, 
        topology, 
