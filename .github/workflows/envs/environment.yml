@@ -1,0 +1,9 @@
+name: test
+channels:
+  - conda-forge
+
+dependencies:
+  - pymol-open-source
+  - pip
+  - pip:
+    - -r ../../../requirements.txt

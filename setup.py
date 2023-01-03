@@ -31,15 +31,15 @@ setup(
     license="License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     keywords=("simulation analysis molecular dynamics biosimulation conserved water "),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     url="https://github.com/JecaTosovic/WaterNetworkAnalysis",
     download_url="https://pypi.org/project/WaterNetworkAnalysis/",
@@ -49,7 +49,7 @@ setup(
         "Source Code": "https://github.com/JecaTosovic/WaterNetworkAnalysis",
         "Issue Tracker": "https://github.com/JecaTosovic/WaterNetworkAnalysis/issues",
     },
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     # Which Python importable modules should be included when your package is installed
     # Handled automatically by setuptools. Use 'exclude' to prevent some specific
     # subpackage(s) from being added, if needed
@@ -64,12 +64,8 @@ setup(
     # url='http://www.my_package.com',  # Website
     install_requires=[
         "ConservedWaterSearch",
-        "hdbscan>=0.8.28",
-        "matplotlib",
         "MDAnalysis",
-        "numpy",
-        "scikit-learn",
-        "nglview",
+        "numpy<1.24",
         "wget",
     ],  # Required packages, pulls from pip if needed; do not use for Conda deployment
     platforms=['Linux',

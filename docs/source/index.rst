@@ -1,13 +1,20 @@
 Welcome to WaterNetworkAnalysis's documentation!
 ================================================
 
-.. include:: ../../README.rst
+.. include:: quickstart.rst
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Introduction:
 
-   modules
+   quickstart
+   examples
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API:
+
+   WaterNetworkAnalysis
 
 Indices and tables
 ==================
