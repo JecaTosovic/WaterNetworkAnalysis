@@ -126,7 +126,23 @@ def test_align_mda():
     os.remove("aligned_trajectory.xtc")
     os.remove("align.pdb")
 
-
+    
+def test_align_mda_every():
+    align_trajectory(
+        trajectory="tests/data/testtrjgromacs.xtc",
+        output_trj_file="aligned_trajectory.xtc",
+        align_target_file_name="align.pdb",
+        align_mode="mda",
+        align_target=0,
+        align_selection="protein",
+        topology="tests/data/testtopgromacs.tpr",
+        every=2,
+    )
+    # os.remove("tests/data/testtrjgromacs_0.xtc")
+    os.remove("aligned_trajectory.xtc")
+    os.remove("align.pdb")
+      
+    
 def test_align_probis():
     align_trajectory(
         trajectory="tests/data/testtrjgromacs.xtc",
