@@ -665,7 +665,7 @@ def align_trajectory(
     elif every == 1:
         unaligned_trj_file: str = trajectory
     else:
-        raise Exception("every must be positive")
+        raise Exception("every must be a positive integer")
     if align_mode == "probis":
         __align_probis(
             unaligned_trj_file=unaligned_trj_file,
