@@ -661,7 +661,7 @@ def align_trajectory(
         )
         with mda.Writer(unaligned_trj_file, multiframe=True) as W:
             for i in mob.trajectory[::every]:
-                W.write(i.atoms)
+                W.write(mob.atoms)
     elif every == 1:
         unaligned_trj_file: str = trajectory
     else:
