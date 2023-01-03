@@ -8,7 +8,7 @@ WaterNetworkAnalysis
 
 The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input preparation and further analysis for `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`_ python package which identifies conserved water molecules from Molecular Dynamics (MD) trajectories.
 
-.. image:: docs/source/figs/Scheme.png
+.. image:: https://github.com/JecaTosovic/WaterNetworkAnalysis/blob/master/docs/source/figs/Scheme.png
   :width: 600
 
 Important links
@@ -98,5 +98,5 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
 
 
 
-.. image:: docs/source/figs/Results.png
+.. image:: https://github.com/JecaTosovic/WaterNetworkAnalysis/blob/master/docs/source/figs/Results.png
   :width: 600
