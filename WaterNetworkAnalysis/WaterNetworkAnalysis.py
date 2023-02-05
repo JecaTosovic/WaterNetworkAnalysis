@@ -662,11 +662,11 @@ def align_trajectory(
         )
         with mda.Writer(unaligned_trj_file, multiframe=True) as W:
             for i in mob.trajectory[::every]:
-                W.write(i.atoms)
+                W.write(mob.atoms)
     elif every == 1:
         unaligned_trj_file: str = trajectory
     else:
-        raise Exception("every must be positive")
+        raise Exception("every must be a positive integer")
     if align_mode == "probis":
         __align_probis(
             unaligned_trj_file=unaligned_trj_file,
