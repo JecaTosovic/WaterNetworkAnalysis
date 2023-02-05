@@ -35,7 +35,6 @@ setup(
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -49,7 +48,7 @@ setup(
         "Source Code": "https://github.com/JecaTosovic/WaterNetworkAnalysis",
         "Issue Tracker": "https://github.com/JecaTosovic/WaterNetworkAnalysis/issues",
     },
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     # Which Python importable modules should be included when your package is installed
     # Handled automatically by setuptools. Use 'exclude' to prevent some specific
     # subpackage(s) from being added, if needed
