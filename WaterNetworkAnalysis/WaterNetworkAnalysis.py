@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import stat
-from warnings import WarningMessage
 
 import MDAnalysis as mda
 import numpy as np
@@ -387,10 +386,12 @@ def extract_waters_from_trajectory(
                 + str(j)
             )
             if len(Hs) != 2:
-                #raise Exception(
+                # raise Exception(
                 #    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
-                #)
-                print(f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)}). Skipping.")
+                # )
+                print(
+                    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)}). Skipping."
+                )
                 continue
             for l in Hs.positions:
                 coordsH.append(l)
