@@ -51,11 +51,16 @@ setup(
     include_package_data=True,
     setup_requires=[] + pytest_runner,
     install_requires=[
-        "ConservedWaterSearch",
-        "MDAnalysis",
-        "numpy<1.24",
-        "wget",
+        "ConservedWaterSearch>=0.1.0",
+        "MDAnalysis>=2.0.0",
+        "numpy>=1.21",
+        "wget>=3.0.0",
     ],
-    platforms=["Linux", "Mac OS-X", "Unix", "Windows"],
+    platforms=[
+        "Linux",
+        "Mac OS-X",
+        "Unix",
+        "Windows",
+    ],
     zip_safe=False,
 )

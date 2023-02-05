@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import stat
-from warnings import WarningMessage
 
 import MDAnalysis as mda
 import numpy as np
@@ -387,10 +386,12 @@ def extract_waters_from_trajectory(
                 + str(j)
             )
             if len(Hs) != 2:
-                #raise Exception(
+                # raise Exception(
                 #    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
-                #)
-                print(f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)}). Skipping.")
+                # )
+                print(
+                    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)}). Skipping."
+                )
                 continue
             for l in Hs.positions:
                 coordsH.append(l)
@@ -661,11 +662,11 @@ def align_trajectory(
         )
         with mda.Writer(unaligned_trj_file, multiframe=True) as W:
             for i in mob.trajectory[::every]:
-                W.write(i.atoms)
+                W.write(mob.atoms)
     elif every == 1:
         unaligned_trj_file: str = trajectory
     else:
-        raise Exception("every must be positive")
+        raise Exception("every must be a positive integer")
     if align_mode == "probis":
         __align_probis(
             unaligned_trj_file=unaligned_trj_file,
