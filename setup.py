@@ -63,16 +63,17 @@ setup(
     # Additional entries you may want simply uncomment the lines you want and fill in the data
     # url='http://www.my_package.com',  # Website
     install_requires=[
-        "ConservedWaterSearch",
-        "MDAnalysis",
-        "numpy<1.24",
-        "wget",
+        "ConservedWaterSearch>=0.1.0",
+        "MDAnalysis>=2.0.0",
+        "numpy>=1.21",
+        "wget>=3.0.0",
     ],  # Required packages, pulls from pip if needed; do not use for Conda deployment
-    platforms=['Linux',
-                'Mac OS-X',
-                'Unix',
-                'Windows'
-              ],            # Valid platforms your code works on, adjust to your flavor
+    platforms=[
+        "Linux",
+        "Mac OS-X",
+        "Unix",
+        "Windows",
+    ],  # Valid platforms your code works on, adjust to your flavor
     # Manual control if final package is compressible or not, set False to prevent the .egg from being made
     zip_safe=False,
 )
