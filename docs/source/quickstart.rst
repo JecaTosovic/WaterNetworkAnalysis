@@ -28,21 +28,31 @@ For citations and more infromation see `ConservedWaterSearch citation <https://c
 
 Installation
 ------------
-The easiest ways to install **WaterNetworkAnalysis** is using pip:
+The easiest ways to install **WaterNetworkAnalysis** is using :code:`conda` from conda-forge:
+
+.. code:: bash
+
+    conda install -c conda-forge WaterNetworkAnalysis
+
+Alternatively, WNA is also available on PyPi via :code:`pip`. However, because WNA depends on `ConservedWaterSearch <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_ which requires hdbscan whose PyPi installation requires a C++ compiler (see `here <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_ for more information) aditional dependencies have to be installed:
+
+.. code:: bash
+
+   conda install -c conda-forge cxx-compiler
+
+`Pymol <https://pymol.org/2/>`_ is an optional dependency for visualisation and is not present on PyPi, however WNA can be installed and used without it (bar pymol visualisation features). Pymol can be installed using :code:`conda`:
+
+.. code:: bash
+
+   conda install -c conda-forge pymol-open-source
+ 
+Finally, to install WNA via :code:`pip` use:
 
 .. code:: bash
 
    pip install WaterNetworkAnalysis
 
-Conda builds will be available soon.
-
-WNA depends on ConservedWaterSearch (CWS). To utilize full visualisation capabilities of CWS, `pymol <https://pymol.org/2/>`_ should be installed. Easiest way to install pymol is via ``conda``:
-
-.. code:: bash
-
-   conda install -c conda-forge pymol-open-source
-
-For more information see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
+For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
 
 Example
 -------
