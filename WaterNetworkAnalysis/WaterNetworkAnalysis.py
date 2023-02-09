@@ -15,7 +15,7 @@ from ConservedWaterSearch.utils import (
 def get_selection_string_from_resnums(
     resids: list[int], selection_type: str = "MDA"
 ) -> str:
-    """Returns selection string for given residue ids.
+    """Return selection string for given residue ids.
 
     Returns the selection command string for different programs based on
     amioacid residue IDs list given.
@@ -66,7 +66,7 @@ def get_selection_string_from_resnums(
 def get_center_of_selection(
     selection: str, trajectory: str, topology: str | None = None
 ) -> np.ndarray:
-    """Computes centre of selection with MDAnalysis.
+    """Compute centre of selection with MDAnalysis.
 
     Calculates coordinates in xyz of the centre of selection using
     MDAnalysis.
@@ -106,7 +106,7 @@ def calculate_oxygen_density_map(
     SOL: str = "SOL",
     output_name: str = "water.dx",
 ) -> None:
-    """generate oxygen density maps.
+    """Generate oxygen density maps.
 
     Generate oxygen density maps using MDAnalysis.
 
@@ -174,7 +174,7 @@ def make_results_pdb_MDA(
     ligand_name: str | None = None,
     mode: str = "SOL",
 ) -> None:
-    """Generates pdb file with clustering results.
+    """Generate pdb file with clustering results.
 
     The water molecules determined by the clustering procedure are
     written in a pdb file which also contains protein and the ligand.
@@ -315,7 +315,7 @@ def extract_waters_from_trajectory(
     HW2: str = "HW2",
     save_file: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Extracts waters for clustering analysis.
+    """Extract waters for clustering analysis.
 
     Calculates water (oxygen and hydrogen) coordinates for all the
     waters in the aligned trajectory using MDAnalysis for further use in water
@@ -533,7 +533,7 @@ def align_trajectory(
     align_selection: str = "protein",
     probis_exec: str | None = None,
 ) -> None:
-    """Function for aligning the trajectory.
+    """Align the trajectory.
 
     Before running water clustering for identification of conserved
     water molecules the trajectory should be aligned first. Alignment
@@ -543,6 +543,30 @@ def align_trajectory(
     which the align target will be saved to with ``align_target_file_name``
     OR set align_target to ``None`` and ``align_target_file_name`` will be read
     and used as align target.
+
+    The trajectory or topology should contain information on bond topology
+    for alignment. Supported topology file types:
+
+        DATA
+        DMS
+        GSD
+        MMTF
+        MOL2
+        PARMED
+        PDB
+        ENT
+        PSF
+        TOP
+        PRMTOP
+        PARM7
+        TPR
+        TXYZ
+        ARC
+        XML
+        XPDB
+
+    Alternatively the whole trajectory can be provided in some of the above
+    given file types as well.
 
     Args:
         trajectory (str): File name containing unaligned trajectory.
@@ -589,65 +613,77 @@ def align_trajectory(
         mob: mda.Universe = mda.Universe(trajectory)
         ref = mda.Universe(trajectory)
     # center the box to center of mass
-    if topology.upper().endswith(
-        (
-            "DATA",
-            "DMS",
-            "GSD",
-            "MMTF",
-            "MOL2",
-            "PARMED",
-            "PDB",
-            "ENT",
-            "PSF",
-            "TOP",
-            "PRMTOP",
-            "PARM7",
-            "TPR",
-            "TXYZ",
-            "ARC",
-            "XML",
-            "XPDB",
-        )
-    ) or trajectory.upper().endswith(
-        (
-            "DATA",
-            "DMS",
-            "GSD",
-            "MMTF",
-            "MOL2",
-            "PARMED",
-            "PDB",
-            "ENT",
-            "PSF",
-            "TOP",
-            "PRMTOP",
-            "PARM7",
-            "TPR",
-            "TXYZ",
-            "ARC",
-            "XML",
-            "XPDB",
+    if topology is None:
+        if not (
+            trajectory.upper().endswith(
+                (
+                    "DATA",
+                    "DMS",
+                    "GSD",
+                    "MMTF",
+                    "MOL2",
+                    "PARMED",
+                    "PDB",
+                    "ENT",
+                    "PSF",
+                    "TOP",
+                    "PRMTOP",
+                    "PARM7",
+                    "TPR",
+                    "TXYZ",
+                    "ARC",
+                    "XML",
+                    "XPDB",
+                    "PDB",
+                )
+            )
+        ):
+            raise Exception(
+                "unsupported trajectory file format. bond topology information is needed for alignment. Consider providing a topology file."
+            )
+    elif not (
+        topology.upper().endswith(
+            (
+                "DATA",
+                "DMS",
+                "GSD",
+                "MMTF",
+                "MOL2",
+                "PARMED",
+                "PDB",
+                "ENT",
+                "PSF",
+                "TOP",
+                "PRMTOP",
+                "PARM7",
+                "TPR",
+                "TXYZ",
+                "ARC",
+                "XML",
+                "XPDB",
+                "PDB",
+            )
         )
     ):
-        protein1: mda.AtomGroup = ref.select_atoms("protein")
-        not_protein1: mda.AtomGroup = ref.select_atoms("not protein")
-        protein2: mda.AtomGroup = mob.select_atoms("protein")
-        not_protein2: mda.AtomGroup = mob.select_atoms("not protein")
-        transforms1 = [
-            trans.unwrap(protein1),
-            trans.center_in_box(protein1, wrap=True),
-            trans.wrap(not_protein1),
-        ]
-        transforms2 = [
-            trans.unwrap(protein2),
-            trans.center_in_box(protein2, wrap=True),
-            trans.wrap(not_protein2),
-        ]
-        ref.trajectory.add_transformations(*transforms1)
-        mob.trajectory.add_transformations(*transforms2)
-    else:
-        raise Exception("cannot center the protein")
+        raise Exception(
+            "unsupported topology file type. Bond information is needed for alignment."
+        )
+    protein1: mda.AtomGroup = ref.select_atoms("protein")
+    not_protein1: mda.AtomGroup = ref.select_atoms("not protein")
+    protein2: mda.AtomGroup = mob.select_atoms("protein")
+    not_protein2: mda.AtomGroup = mob.select_atoms("not protein")
+    transforms1 = [
+        trans.unwrap(protein1),
+        trans.center_in_box(protein1, wrap=True),
+        trans.wrap(not_protein1),
+    ]
+    transforms2 = [
+        trans.unwrap(protein2),
+        trans.center_in_box(protein2, wrap=True),
+        trans.wrap(not_protein2),
+    ]
+    ref.trajectory.add_transformations(*transforms1)
+    mob.trajectory.add_transformations(*transforms2)
     ref.select_atoms(align_selection).segments.segids = "A"
     ref.add_TopologyAttr("chainIDs")
     ref.select_atoms(align_selection).chainIDs = "A"
@@ -705,8 +741,7 @@ def align_and_extract_waters(
     HW1: str = "HW1",
     HW2: str = "HW2",
 ) -> tuple[np.ndarray]:
-    """Convenience function - aligns and extracts waters from
-    trajectory.
+    """Align and extracts waters from trajectory.
 
     Aligns the trajectory first and then extracts water molecules for
     further water clustering analysis. If trajectory has already been
@@ -805,7 +840,7 @@ def read_results_and_make_pdb(
     output_fname: str | None = None,
     mode: str = "SOL",
 ) -> None:
-    """Convenience function that reads results from files and generates a pdb file.
+    """Read results from files and generate a pdb file.
 
     Args:
         fname (str, optional): File name with clustering results -
