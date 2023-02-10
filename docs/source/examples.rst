@@ -143,7 +143,7 @@ WNA supports calculation of oxygen density maps using `MDAnalysis <https://www.m
 
 .. code:: python
 
-   from WaterNetworkAnalysis import align_and_extract_waters, get_center_of_selection,get_selection_string_from_resnums
+   from WaterNetworkAnalysis import align_and_extract_waters, get_center_of_selection, get_selection_string_from_resnums, calculate_oxygen_density_map
    # MD trajectory filename
    trajectory="md.xtc"
    # topology filename
