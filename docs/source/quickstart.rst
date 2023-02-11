@@ -57,6 +57,23 @@ Finally, to install WNA via :code:`pip` use:
 
 For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
 
+
+Known Issues with dependencies
+==============================
+
+:code:`AttributeError: 'super' object has no attribute '_ipython_display_'`
+Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`_). To resolve install version of :code:`ipywidgets<8` using :code:`conda`: 
+
+.. code:: bash
+
+   conda install "ipywidgets <8" -c conda-forge
+
+or :code:`pip`:
+
+.. code:: bash
+
+   pip install ipywidgets==7.6.0
+
 Example
 -------
 The following example shows how to use **WaterNetworkAnalysis** to prepare a MD trajectory and analyse the results for determination of conserved water networks.
