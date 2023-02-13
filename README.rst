@@ -8,7 +8,7 @@ WaterNetworkAnalysis
     :target: https://anaconda.org/conda-forge/waternetworkanalysis
 
 
-The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input preparation and further analysis for `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`_ python package which identifies conserved water molecules from Molecular Dynamics (MD) trajectories.
+The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input preparation and further analysis for `ConservedWaterSearch <https://conservedwatersearch.readthedocs.io/en/latest/>`__ (CWS) python package which identifies conserved water molecules from Molecular Dynamics (MD) trajectories.
 
 .. image:: https://github.com/JecaTosovic/WaterNetworkAnalysis/blob/master/docs/source/figs/Scheme.png
   :width: 600
@@ -21,7 +21,7 @@ Important links
 
 Related Tools
 =============
-	- `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`_: Analysis of conserved waters from simulation trajectories. For docs see `here <https://conservedwatersearch.readthedocs.io/en/latest/>`_.
+	- `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`__: Analysis of conserved waters from simulation trajectories. For docs see `here <https://conservedwatersearch.readthedocs.io/en/latest/>`__.
 
 Citation
 ========
@@ -35,13 +35,13 @@ The easiest ways to install **WaterNetworkAnalysis** is using :code:`conda` from
 
     conda install -c conda-forge WaterNetworkAnalysis
 
-Alternatively, WNA is also available on PyPi via :code:`pip`. However, because WNA depends on `ConservedWaterSearch <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_ which requires hdbscan whose PyPi installation requires a C++ compiler (see `here <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_ for more information) aditional dependencies have to be installed:
+Alternatively, WNA is also available on PyPi via :code:`pip`. However, because WNA depends on ConservedWaterSearch which requires hdbscan whose PyPi installation requires a C++ compiler (`see here <https://conservedwatersearch.readthedocs.io/en/latest/installation.html#prerequisits>`__ for more information) aditional dependencies have to be installed:
 
 .. code:: bash
 
    conda install -c conda-forge cxx-compiler
 
-`Pymol <https://pymol.org/2/>`_ is an optional dependency for visualisation and is not present on PyPi, however WNA can be installed and used without it (bar pymol visualisation features). Pymol can be installed using :code:`conda`:
+`Pymol <https://pymol.org/2/>`__ is an optional dependency for visualisation and is not present on PyPi, however WNA can be installed and used without it (bar pymol visualisation features). Pymol can be installed using :code:`conda`:
 
 .. code:: bash
 
@@ -53,13 +53,13 @@ Finally, to install WNA via :code:`pip` use:
 
    pip install WaterNetworkAnalysis
 
-For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
+For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`__.
 
 Known Issues with dependencies
 ==============================
 
 :code:`AttributeError: 'super' object has no attribute '_ipython_display_'`
-Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`_). To resolve install version of :code:`ipywidgets<8` using :code:`conda`: 
+Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`__). To resolve install version of :code:`ipywidgets<8` using :code:`conda`: 
 
 .. code:: bash
 
