@@ -311,8 +311,6 @@ def extract_waters_from_trajectory(
     dist: float = 12.0,
     SOL: str = "SOL",
     OW: str = "OW",
-    HW1: str = "HW1",
-    HW2: str = "HW2",
     save_file: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Extract waters for clustering analysis.
@@ -331,10 +329,6 @@ def extract_waters_from_trajectory(
         SOL (str, optional): Residue name for waters. Defaults to "SOL".
         OW (str, optional): Name of the oxygen atom in water molecules.
             Defaults to "OW".
-        HW1 (str, optional): Name of hydrogen 1 atom in water molecules.
-            Defaults to "HW1".
-        HW2 (str, optional): Name of hydrogen 2 atom in water molecules.
-            Defaults to "HW2".
         save_file (str | None, optional): File to which coordinates will
             be saved. If none doesn't save to a file. Defaults to None.
 
@@ -353,13 +347,15 @@ def extract_waters_from_trajectory(
             topology = 'topology.tpr'
         )
     """
-    # think about another method of selecting waters - ie within some distance of an atom index?
     if topology:
         u = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
     coordsH = []
     coordsO = []
+    waters = u.select_atoms(f'resname {SOL}')
+    if len(waters.bonds) == 0:
+        waters.guess_bonds()
     # loop over
     for nn, k in enumerate(u.trajectory):
         Os = u.select_atoms(
@@ -376,23 +372,12 @@ def extract_waters_from_trajectory(
             + " "
             + str(dist)
         )
-        for i, j in zip(Os.positions, Os.indices):
-            Hs = u.select_atoms(
-                "(name "
-                + str(HW1)
-                + " or name "
-                + str(HW2)
-                + ") and around 1.0 index "
-                + str(j)
-            )
+        for i, j in zip(Os.positions, Os):
+            Hs = j.bonded_atoms
             if len(Hs) != 2:
-                # raise Exception(
-                #    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
-                # )
-                print(
-                    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)}). Skipping."
+                raise Exception(
+                   f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
                 )
-                continue
             for l in Hs.positions:
                 coordsH.append(l)
             coordsO.append(i)
