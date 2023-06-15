@@ -20,7 +20,7 @@ except:
 
 setup(
     name="WaterNetworkAnalysis",
-    version="0.1.1",
+    version="0.1.2",
     author="Domagoj Fijan, Jelena Tosovic, Marko Jukic, Urban Bren",
     author_email="jecat_90@live.com",
     description=short_description[0],
