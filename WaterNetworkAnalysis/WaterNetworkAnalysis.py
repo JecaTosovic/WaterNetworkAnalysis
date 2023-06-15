@@ -311,8 +311,6 @@ def extract_waters_from_trajectory(
     dist: float = 12.0,
     SOL: str = "SOL",
     OW: str = "OW",
-    HW1: str = "HW1",
-    HW2: str = "HW2",
     save_file: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Extract waters for clustering analysis.
@@ -331,10 +329,6 @@ def extract_waters_from_trajectory(
         SOL (str, optional): Residue name for waters. Defaults to "SOL".
         OW (str, optional): Name of the oxygen atom in water molecules.
             Defaults to "OW".
-        HW1 (str, optional): Name of hydrogen 1 atom in water molecules.
-            Defaults to "HW1".
-        HW2 (str, optional): Name of hydrogen 2 atom in water molecules.
-            Defaults to "HW2".
         save_file (str | None, optional): File to which coordinates will
             be saved. If none doesn't save to a file. Defaults to None.
 
@@ -353,7 +347,6 @@ def extract_waters_from_trajectory(
             topology = 'topology.tpr'
         )
     """
-    # think about another method of selecting waters - ie within some distance of an atom index?
     if topology:
         u = mda.Universe(topology, trajectory)
     else:
