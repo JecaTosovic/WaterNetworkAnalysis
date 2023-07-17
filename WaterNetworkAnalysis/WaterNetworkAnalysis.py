@@ -137,12 +137,36 @@ def calculate_oxygen_density_map(
             )
         )
     """
-    from MDAnalysis.analysis.density import DensityAnalysis
+    from MDAnalysis.analysis.density import DensityAnalysis, Density
+    from scipy.ndimage import gaussian_filter
+
+    length_units = "A"
+    density_units = "A^{-3}"
+
+    if trajectory.upper().endswith(
+        "GRO",
+        "XTC",
+    ):
+        length_units = "nm"
+        density_units = "nm^{-3}"
 
     if topology:
+        if topology.upper().endswith(
+            (
+                "TOP",
+                "TPR",
+                "GRO",
+            )
+        ):
+            length_units = "nm"
+            density_units = "nm^{-3}"
         u: mda.Universe = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
+    if length_units == "nm":
+        vdw_radius = 0.152
+    elif length_units == "A":
+        vdw_radius = 1.52
     ss: mda.AtomGroup = u.select_atoms(
         "name "
         + OW
@@ -158,10 +182,30 @@ def calculate_oxygen_density_map(
         + str(dist),
         updating=True,
     )
-    D: DensityAnalysis = DensityAnalysis(ss, delta=delta)
+    D: DensityAnalysis = DensityAnalysis(
+        ss,
+        delta=delta,
+        gridcenter=selection_center,
+        xdim=dist * 2,
+        ydim=dist * 2,
+        zdim=dist * 2,
+    )
     D.run()
-    D.density.convert_density("A^{-3}")
-    D.density.export(output_name, type="double")
+    # determine vdw units based on file type
+    sigma = vdw_radius / delta
+    probability_density = D.results.density.grid / D.results.density.grid.sum()
+    smoothed_density = gaussian_filter(probability_density, sigma)
+    smoothed_density = smoothed_density / np.max(smoothed_density)
+
+    # Put smoothed density into a Density object
+    smoothed_density_obj = Density(
+        grid=smoothed_density,
+        edges=D._edges,
+        # determine these units based on file type
+        parameters={"isDensity": True},
+        units={"length": length_units, "density": density_units},
+    )
+    smoothed_density_obj.export(output_name, type="double")
 
 
 def make_results_pdb_MDA(
@@ -353,7 +397,7 @@ def extract_waters_from_trajectory(
         u = mda.Universe(trajectory)
     coordsH = []
     coordsO = []
-    waters = u.select_atoms(f'resname {SOL}')
+    waters = u.select_atoms(f"resname {SOL}")
     if len(waters.bonds) == 0:
         waters.guess_bonds()
     # loop over
@@ -376,10 +420,10 @@ def extract_waters_from_trajectory(
             Hs = j.bonded_atoms
             if len(Hs) != 2:
                 raise Exception(
-                   f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
+                    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
                 )
-            for l in Hs.positions:
-                coordsH.append(l)
+            for hydrogen_positions in Hs.positions:
+                coordsH.append(hydrogen_positions)
             coordsO.append(i)
     Odata: np.ndarray = np.asarray(coordsO)
     coordsH = np.asarray(coordsH)
