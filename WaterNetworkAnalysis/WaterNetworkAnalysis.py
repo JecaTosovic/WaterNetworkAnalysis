@@ -144,8 +144,10 @@ def calculate_oxygen_density_map(
     density_units = "A^{-3}"
 
     if trajectory.upper().endswith(
-        "GRO",
-        "XTC",
+        (
+            "GRO",
+            "XTC",
+        )
     ):
         length_units = "nm"
         density_units = "nm^{-3}"
