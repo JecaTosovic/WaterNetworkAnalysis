@@ -55,6 +55,7 @@ setup(
         "MDAnalysis>=2.0.0",
         "numpy>=1.21",
         "wget>=3.0.0",
+        "scipy>=1.7.0",
     ],
     platforms=[
         "Linux",
