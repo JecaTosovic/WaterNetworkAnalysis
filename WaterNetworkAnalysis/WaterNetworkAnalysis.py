@@ -653,22 +653,6 @@ def align_trajectory(
         raise Exception(
             "unsupported topology file type. Bond information is needed for alignment."
         )
-    protein1: mda.AtomGroup = ref.select_atoms("protein")
-    not_protein1: mda.AtomGroup = ref.select_atoms("not protein")
-    protein2: mda.AtomGroup = mob.select_atoms("protein")
-    not_protein2: mda.AtomGroup = mob.select_atoms("not protein")
-    transforms1 = [
-        trans.unwrap(protein1),
-        trans.center_in_box(protein1, wrap=True),
-        trans.wrap(not_protein1),
-    ]
-    transforms2 = [
-        trans.unwrap(protein2),
-        trans.center_in_box(protein2, wrap=True),
-        trans.wrap(not_protein2),
-    ]
-    ref.trajectory.add_transformations(*transforms1)
-    mob.trajectory.add_transformations(*transforms2)
     ref.select_atoms(align_selection).segments.segids = "A"
     ref.add_TopologyAttr("chainIDs")
     ref.select_atoms(align_selection).chainIDs = "A"
