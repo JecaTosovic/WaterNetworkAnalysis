@@ -1,0 +1,4 @@
+sphinxcontrib-bibtex
+jupyter_packaging
+matplotlib
+nglview
