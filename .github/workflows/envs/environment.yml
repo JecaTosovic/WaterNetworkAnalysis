@@ -6,4 +6,4 @@ dependencies:
   - pymol-open-source>=2.3
   - pip
   - pip:
-    - -r ../../../requirements.txt
+    - -r ../../../requirements/requirements-test.txt
