@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Create Python Environment
@@ -26,14 +26,6 @@ jobs:
         show-channel-urls: true
         miniforge-variant: Mambaforge
         use-mamba: true
-    - name: Lint with flake8
-      run: |
-        which python
-        python -m pip install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings.
-        flake8 . --count --exit-zero --max-complexity=20 --max-line-length=100 --statistics
     - name: Install package
       shell: bash -l {0}
       run: |

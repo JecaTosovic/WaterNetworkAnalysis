@@ -1,0 +1,4 @@
+ConservedWaterSearch==0.1.2
+numpy==1.23
+MDAnalysis==2.4.0
+wget==3.2
