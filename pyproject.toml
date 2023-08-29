@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>64.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "WaterNetworkAnalysis"
+version = "0.1.2"
+authors = [
+    { name = "Domagoj Fijan" },
+    { name = "Jelena Tosovic", email = "jecat_90@live.com" },
+    { name = "Marko Jukic" },
+    { name = "Urban Bren" },
+]
+description = "Set of tools for input preparation for conserved water search from MD trajectories (gromacs, amber) and their analysis"
+readme = { file = "README.rst", content-type = "text/x-rst" }
+license = { file = "LICENSE" }
+keywords = [
+    "simulation",
+    "analysis",
+    "molecular dynamics",
+    "biosimulation",
+    "conserved water",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.8"
+dynamic = ["dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/JecaTosovic/WaterNetworkAnalysis"
+Documentation = "https://WaterNetworkAnalysis.readthedocs.io/"
+Source = "https://github.com/JecaTosovic/WaterNetworkAnalysis"
+Issue = "https://github.com/JecaTosovic/WaterNetworkAnalysis/issues"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements/requirements.txt"] }
+
+[tool.flake8]
+max-line-length = 90
+filename = ["*.py"]
+exclude = [".eggs", "*.egg"]
+select = ["E", "F", "W"]
+ignore = [
+    "E203",
+    "E225",
+    "E226",
+    "E227",
+    "E741",
+    "E999",
+    "W503",
+    "W504",
+    "E501",
+]
