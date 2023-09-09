@@ -23,8 +23,8 @@ copyright = "2022, J Tosovic"
 author = "Jelena Tosovic, Domagoj Fijan, Marko Jukic, Urban Bren"
 
 # The full version, including alpha/beta/rc tags
-version = "0.1.2"
-release = "0.1.2"
+version = "0.2.0"
+release = "0.2.0"
 
 
 # -- General configuration ---------------------------------------------------
