@@ -171,8 +171,7 @@ def calculate_oxygen_density_map(
         zdim=dist * 2,
     )
     D.run()
-    # should it be 1.52 or 0.152?
-    # visualize to determine this
+    # oxygen vdw radius
     vdw_radius = 1.52
     sigma = vdw_radius / delta
     probability_density = D.results.density.grid / D.results.density.grid.sum()
@@ -182,7 +181,6 @@ def calculate_oxygen_density_map(
     smoothed_density_obj = Density(
         grid=smoothed_density,
         edges=D._edges,
-        # determine these units based on file type
         parameters={"isDensity": True},
     )
     smoothed_density_obj.export(output_name, type="double")
