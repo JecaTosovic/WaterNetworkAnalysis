@@ -5,6 +5,8 @@ import stat
 
 import MDAnalysis as mda
 import numpy as np
+from MDAnalysis.analysis.density import DensityAnalysis, Density
+from scipy.ndimage import gaussian_filter
 
 from ConservedWaterSearch.utils import (
     get_orientations_from_positions,
@@ -105,7 +107,7 @@ def calculate_oxygen_density_map(
     OW: str = "OW",
     SOL: str = "SOL",
     output_name: str = "water.dx",
-) -> None:
+) -> Density:
     """Generate oxygen density maps.
 
     Generate oxygen density maps using MDAnalysis.
@@ -127,6 +129,10 @@ def calculate_oxygen_density_map(
         output_name (str, optional): name of the output file, it should
             end with '.dx' . Defaults to "water.dx".
 
+    Returns:
+        Density:
+            returns MDA Density object containing the density map
+
     Example::
 
         # Generate water oxygen density map near active site
@@ -137,8 +143,6 @@ def calculate_oxygen_density_map(
             )
         )
     """
-    from MDAnalysis.analysis.density import DensityAnalysis
-
     if topology:
         u: mda.Universe = mda.Universe(topology, trajectory)
     else:
@@ -158,10 +162,29 @@ def calculate_oxygen_density_map(
         + str(dist),
         updating=True,
     )
-    D: DensityAnalysis = DensityAnalysis(ss, delta=delta)
+    D: DensityAnalysis = DensityAnalysis(
+        ss,
+        delta=delta,
+        gridcenter=selection_center,
+        xdim=dist * 2,
+        ydim=dist * 2,
+        zdim=dist * 2,
+    )
     D.run()
-    D.density.convert_density("A^{-3}")
-    D.density.export(output_name, type="double")
+    # oxygen vdw radius
+    vdw_radius = 1.52
+    sigma = vdw_radius / delta
+    probability_density = D.results.density.grid / D.results.density.grid.sum()
+    smoothed_density = gaussian_filter(probability_density, sigma)
+    smoothed_density = smoothed_density / np.max(smoothed_density)
+    # Put smoothed density into a Density object
+    smoothed_density_obj = Density(
+        grid=smoothed_density,
+        edges=D._edges,
+        parameters={"isDensity": True},
+    )
+    smoothed_density_obj.export(output_name, type="double")
+    return smoothed_density_obj
 
 
 def make_results_pdb_MDA(
@@ -353,7 +376,7 @@ def extract_waters_from_trajectory(
         u = mda.Universe(trajectory)
     coordsH = []
     coordsO = []
-    waters = u.select_atoms(f'resname {SOL}')
+    waters = u.select_atoms(f"resname {SOL}")
     if len(waters.bonds) == 0:
         waters.guess_bonds()
     # loop over
@@ -376,10 +399,10 @@ def extract_waters_from_trajectory(
             Hs = j.bonded_atoms
             if len(Hs) != 2:
                 raise Exception(
-                   f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
+                    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
                 )
-            for l in Hs.positions:
-                coordsH.append(l)
+            for hydrogen_positions in Hs.positions:
+                coordsH.append(hydrogen_positions)
             coordsO.append(i)
     Odata: np.ndarray = np.asarray(coordsO)
     coordsH = np.asarray(coordsH)

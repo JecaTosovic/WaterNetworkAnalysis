@@ -55,9 +55,7 @@ def test_get_center_of_selection():
     u = mda.fetch_mmtf("3t74")
     u.select_atoms("protein").write("test.pdb")
     sel = u.select_atoms("resid 123")
-    cc = get_center_of_selection(
-        get_selection_string_from_resnums([123]), "test.pdb"
-    )
+    cc = get_center_of_selection(get_selection_string_from_resnums([123]), "test.pdb")
     npt.assert_allclose(cc, sel.center(None))
     os.remove("test.pdb")
 
@@ -126,7 +124,7 @@ def test_align_mda():
     os.remove("aligned_trajectory.xtc")
     os.remove("align.pdb")
 
-    
+
 def test_align_mda_every():
     align_trajectory(
         trajectory="tests/data/testtrjgromacs.xtc",
@@ -141,8 +139,8 @@ def test_align_mda_every():
     # os.remove("tests/data/testtrjgromacs_0.xtc")
     os.remove("aligned_trajectory.xtc")
     os.remove("align.pdb")
-      
-    
+
+
 def test_align_probis():
     align_trajectory(
         trajectory="tests/data/testtrjgromacs.xtc",
@@ -157,3 +155,19 @@ def test_align_probis():
     os.remove("aligned_trajectory.xtc")
     os.remove("probis")
     os.remove("align.pdb")
+
+
+def test_density_map_units():
+    trjfname = "tests/data/testalignedtrj.xtc"
+    topfname = "tests/data/testtopgromacs.tpr"
+    densgro = calculate_oxygen_density_map(
+        get_center_of_selection("resname UBX", trjfname, topfname),
+        trjfname,
+        topfname,
+    )
+    trjpdbname = "tests/data/testalignedtrj.pdb"
+    denspdb = calculate_oxygen_density_map(
+        get_center_of_selection("resname UBX", trjpdbname),
+        trjpdbname,
+    )
+    npt.assert_allclose(densgro.grid, denspdb.grid, atol=1e-3, rtol=1e-3)
