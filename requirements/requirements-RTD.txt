@@ -2,3 +2,5 @@ sphinxcontrib-bibtex
 jupyter_packaging
 matplotlib
 nglview
+MDAnalysis
+ConservedWaterSearch
