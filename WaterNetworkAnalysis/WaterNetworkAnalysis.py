@@ -104,8 +104,8 @@ def calculate_oxygen_density_map(
     topology: str | None = None,
     dist: float = 12.0,
     delta: float = 0.4,
-    OW: str = "OW",
     SOL: str = "SOL",
+    n_every: int = 1,
     output_name: str = "water.dx",
 ) -> Density:
     """Generate oxygen density maps.
@@ -122,10 +122,11 @@ def calculate_oxygen_density_map(
             which the oxygen will be selected. Defaults to 12.0.
         delta (float, optional): bin size for density map. Defaults to
             0.4 Angstroms.
-        OW (str, optional): name of oxygens for selecting water oxygens.
-            Defaults to "OW".
         SOL (str, optional): name of the solvent group for selecting
             solvent oxygens. Defaults to "SOL".
+        n_every (int, optional): Take every ``n_every`` snapshot instead
+            of taking all the snapshots (every = 1) for alignment.
+            Defaults to 1.
         output_name (str, optional): name of the output file, it should
             end with '.dx' . Defaults to "water.dx".
 
@@ -148,18 +149,7 @@ def calculate_oxygen_density_map(
     else:
         u = mda.Universe(trajectory)
     ss: mda.AtomGroup = u.select_atoms(
-        "name "
-        + OW
-        + " and resname "
-        + SOL
-        + " and point "
-        + str(selection_center[0])
-        + " "
-        + str(selection_center[1])
-        + " "
-        + str(selection_center[2])
-        + " "
-        + str(dist),
+        f"element O and resname {SOL} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
         updating=True,
     )
     D: DensityAnalysis = DensityAnalysis(
@@ -170,7 +160,7 @@ def calculate_oxygen_density_map(
         ydim=dist * 2,
         zdim=dist * 2,
     )
-    D.run()
+    D.run(step=n_every)
     # oxygen vdw radius
     vdw_radius = 1.52
     sigma = vdw_radius / delta
@@ -384,9 +374,7 @@ def extract_waters_from_trajectory(
         for i, j in zip(Os.positions, Os):
             Hs = u.select_atoms(f"resid {j.resid} and element H ")
             if len(Hs) != 2:
-                raise Exception(
-                    f"Water {j.resid} has too many hydrogens ({len(Hs)})."
-                )
+                raise Exception(f"Water {j.resid} has too many hydrogens ({len(Hs)}).")
             for hydrogen_positions in Hs.positions:
                 coordsH.append(hydrogen_positions)
             coordsO.append(i)
