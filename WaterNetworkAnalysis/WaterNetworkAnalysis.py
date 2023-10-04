@@ -379,10 +379,10 @@ def extract_waters_from_trajectory(
     # loop over
     for _ in u.trajectory[::every]:
         Os = u.select_atoms(
-            f"type O and resname {SOL} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}"
+            f"element O and resname {SOL} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}"
         )
         for i, j in zip(Os.positions, Os):
-            Hs = u.select_atoms(f"resid {j.resid} and type H ")
+            Hs = u.select_atoms(f"resid {j.resid} and element H ")
             if len(Hs) != 2:
                 raise Exception(
                     f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
