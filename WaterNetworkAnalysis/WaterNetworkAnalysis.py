@@ -385,7 +385,7 @@ def extract_waters_from_trajectory(
             Hs = u.select_atoms(f"resid {j.resid} and element H ")
             if len(Hs) != 2:
                 raise Exception(
-                    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
+                    f"Water {j.resid} has too many hydrogens ({len(Hs)})."
                 )
             for hydrogen_positions in Hs.positions:
                 coordsH.append(hydrogen_positions)
