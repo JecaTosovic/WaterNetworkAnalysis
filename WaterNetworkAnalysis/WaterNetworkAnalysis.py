@@ -333,7 +333,7 @@ def extract_waters_from_trajectory(
     topology: str | None = None,
     dist: float = 12.0,
     SOL: str = "SOL",
-    OW: str = "OW",
+    every: int = 1,
     save_file: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Extract waters for clustering analysis.
@@ -350,8 +350,8 @@ def extract_waters_from_trajectory(
         dist (float, optional): Distance around the center of selection
             inside which water molecules will be sampled. Defaults to 12.0.
         SOL (str, optional): Residue name for waters. Defaults to "SOL".
-        OW (str, optional): Name of the oxygen atom in water molecules.
-            Defaults to "OW".
+        every (int, optional): Take every ``every`` snapshot instead of
+            taking all the snapshots (every = 1) for alignment. Defaults to 1.
         save_file (str | None, optional): File to which coordinates will
             be saved. If none doesn't save to a file. Defaults to None.
 
@@ -376,27 +376,13 @@ def extract_waters_from_trajectory(
         u = mda.Universe(trajectory)
     coordsH = []
     coordsO = []
-    waters = u.select_atoms(f"resname {SOL}")
-    if len(waters.bonds) == 0:
-        waters.guess_bonds()
     # loop over
-    for nn, k in enumerate(u.trajectory):
+    for _ in u.trajectory[::every]:
         Os = u.select_atoms(
-            "name "
-            + str(OW)
-            + " and resname "
-            + str(SOL)
-            + " and point "
-            + str(selection_center[0])
-            + " "
-            + str(selection_center[1])
-            + " "
-            + str(selection_center[2])
-            + " "
-            + str(dist)
+            f"type O and resname {SOL} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}"
         )
         for i, j in zip(Os.positions, Os):
-            Hs = j.bonded_atoms
+            Hs = u.select_atoms(f"resid {j.resid} and type H ")
             if len(Hs) != 2:
                 raise Exception(
                     f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
@@ -774,12 +760,6 @@ def align_and_extract_waters(
             ``center_for_water_selection`` to be used for extraction of
             water molecules. Defaults to 12.0.
         SOL (str, optional): Residue name for waters. Defaults to "SOL".
-        OW (str, optional): Name of the oxygen atom in water molecules. Defaults
-             to "OW".
-        HW1 (str, optional): Name of hydrogen 1 atom in water
-            molecules. Defaults to "HW1".
-        HW2 (str, optional): Name of hydrogen 2 atom in water molecules.
-            Defaults to "HW2".
         save_file (str | None, optional): File to which coordinates
             will be saved. If none doesn't save to a file. Defaults to None.
 
@@ -793,12 +773,18 @@ def align_and_extract_waters(
     Example::
 
         # Generate water coordinates for clustering analysis from unaligned trajectory
-        resids = [8,12,143,144] align_and_extract_waters(
+        resids = [8,12,143,144]
+        align_and_extract_waters(
             get_center_of_selection(get_selection_string_from_resnums(resids)),
-            trajectory = 'trajectory.xtc', aligned_trajectory_filename =
-            'aligned_trj.xtc', align_target_file_name = 'aligned.pdb',
-            topology = 'topology.tpr', every = 1, align_mode = "mda",
-            align_target= 0, align_selection = "protein", dist = 10.0,
+            trajectory = 'trajectory.xtc',
+            aligned_trajectory_filename = 'aligned_trj.xtc',
+            align_target_file_name = 'aligned.pdb',
+            topology = 'topology.tpr',
+            every = 1,
+            align_mode = "mda",
+            align_target= 0,
+            align_selection = "protein",
+            dist = 10.0,
         )
     """
     align_trajectory(
@@ -818,9 +804,6 @@ def align_and_extract_waters(
         dist=dist,
         topology=topology,
         SOL=SOL,
-        OW=OW,
-        HW1=HW1,
-        HW2=HW2,
     )
 
 
