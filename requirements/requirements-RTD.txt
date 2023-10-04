@@ -1,4 +1,5 @@
 sphinxcontrib-bibtex
+sphinx_rtd_theme
 jupyter_packaging
 matplotlib
 nglview
