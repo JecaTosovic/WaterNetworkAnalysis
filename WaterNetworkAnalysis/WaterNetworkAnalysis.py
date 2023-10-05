@@ -4,6 +4,9 @@ import os
 import stat
 
 import MDAnalysis as mda
+import MDAnalysis
+import MDAnalysis.core.topologyattrs
+from MDAnalysis.topology.guessers import guess_types
 import numpy as np
 from MDAnalysis.analysis.density import DensityAnalysis, Density
 from scipy.ndimage import gaussian_filter
@@ -12,6 +15,51 @@ from ConservedWaterSearch.utils import (
     get_orientations_from_positions,
     read_results,
 )
+
+
+def generate_water_selection_string():
+    """
+    Returns a selection string for selecting water molecules based on common
+    residue names used across different simulation packages.
+
+    This function generates a string that can be used in MDAnalysis's
+    select_atoms method to select water molecules from a molecular dynamics
+    simulation. The selection string is based on common residue names used
+    for water molecules across different simulation packages and water models.
+
+    Returns:
+        str: Selection command in form of a string, which can be used with
+             MDAnalysis's select_atoms method.
+
+    Example::
+
+        # Generate water selection string
+        water_selection_string = generate_water_selection_string()
+
+        # Use the selection string to select water molecules
+        u = mda.Universe('topology_file.top', 'trajectory_file.trr')
+        water_molecules = u.select_atoms(water_selection_string)
+    """
+    # List of common residue names for water
+    water_resnames = [
+        "SOL",
+        "WAT",
+        "H2O",
+        "TIP3",
+        "TIP4",
+        "TIP5",
+        "SPC",
+        "SPCE",
+        "HOH",
+        "DOD",
+        "T3P",
+        "T4P",
+    ]
+
+    # Creating the selection string
+    selection_string = " or ".join(f"resname {resname}" for resname in water_resnames)
+
+    return selection_string
 
 
 def get_selection_string_from_resnums(
@@ -104,8 +152,7 @@ def calculate_oxygen_density_map(
     topology: str | None = None,
     dist: float = 12.0,
     delta: float = 0.4,
-    SOL: str = "SOL",
-    n_every: int = 1,
+    every: int = 1,
     output_name: str = "water.dx",
 ) -> Density:
     """Generate oxygen density maps.
@@ -122,9 +169,7 @@ def calculate_oxygen_density_map(
             which the oxygen will be selected. Defaults to 12.0.
         delta (float, optional): bin size for density map. Defaults to
             0.4 Angstroms.
-        SOL (str, optional): name of the solvent group for selecting
-            solvent oxygens. Defaults to "SOL".
-        n_every (int, optional): Take every ``n_every`` snapshot instead
+        every (int, optional): Take every ``n_every`` snapshot instead
             of taking all the snapshots (every = 1) for alignment.
             Defaults to 1.
         output_name (str, optional): name of the output file, it should
@@ -148,8 +193,15 @@ def calculate_oxygen_density_map(
         u: mda.Universe = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
+    guessed_and_read_props = [
+        type(i)
+        for i in list(u._topology.read_attributes)
+        + list(u._topology.guessed_attributes)
+    ]
+    if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
+        u.add_TopologyAttr("elements", guess_types(u.atoms.names))
     ss: mda.AtomGroup = u.select_atoms(
-        f"element O and resname {SOL} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
+        f"element O and {generate_water_selection_string()} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
         updating=True,
     )
     D: DensityAnalysis = DensityAnalysis(
@@ -160,7 +212,7 @@ def calculate_oxygen_density_map(
         ydim=dist * 2,
         zdim=dist * 2,
     )
-    D.run(step=n_every)
+    D.run(step=every)
     # oxygen vdw radius
     vdw_radius = 1.52
     sigma = vdw_radius / delta
@@ -322,7 +374,6 @@ def extract_waters_from_trajectory(
     trajectory: str,
     topology: str | None = None,
     dist: float = 12.0,
-    SOL: str = "SOL",
     every: int = 1,
     save_file: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -339,7 +390,6 @@ def extract_waters_from_trajectory(
         topology (str | None, optional): Topology file name. Defaults to None.
         dist (float, optional): Distance around the center of selection
             inside which water molecules will be sampled. Defaults to 12.0.
-        SOL (str, optional): Residue name for waters. Defaults to "SOL".
         every (int, optional): Take every ``every`` snapshot instead of
             taking all the snapshots (every = 1) for alignment. Defaults to 1.
         save_file (str | None, optional): File to which coordinates will
@@ -364,12 +414,19 @@ def extract_waters_from_trajectory(
         u = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
+    guessed_and_read_props = [
+        type(i)
+        for i in list(u._topology.read_attributes)
+        + list(u._topology.guessed_attributes)
+    ]
+    if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
+        u.add_TopologyAttr("elements", guess_types(u.atoms.names))
     coordsH = []
     coordsO = []
     # loop over
     for _ in u.trajectory[::every]:
         Os = u.select_atoms(
-            f"element O and resname {SOL} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}"
+            f"element O and {generate_water_selection_string()} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}"
         )
         for i, j in zip(Os.positions, Os):
             Hs = u.select_atoms(f"resid {j.resid} and element H ")
