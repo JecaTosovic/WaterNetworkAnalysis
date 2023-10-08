@@ -153,6 +153,8 @@ def calculate_oxygen_density_map(
     dist: float = 12.0,
     delta: float = 0.4,
     every: int = 1,
+    SOL: str = None,
+    OW: str = None,
     output_name: str = "water.dx",
 ) -> Density:
     """Generate oxygen density maps.
@@ -172,6 +174,10 @@ def calculate_oxygen_density_map(
         every (int, optional): Take every ``n_every`` snapshot instead
             of taking all the snapshots (every = 1) for alignment.
             Defaults to 1.
+        SOL (str, optional): Residue name of the water residue. If ``None`` it
+            will be determined automatically. Defaults to None.
+        OW (str, optional): Name of the oxygen atom. If ``None`` it will
+            be determined automatically. Defaults to None.
         output_name (str, optional): name of the output file, it should
             end with '.dx' . Defaults to "water.dx".
 
@@ -193,15 +199,23 @@ def calculate_oxygen_density_map(
         u: mda.Universe = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
-    guessed_and_read_props = [
-        type(i)
-        for i in list(u._topology.read_attributes)
-        + list(u._topology.guessed_attributes)
-    ]
-    if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
-        u.add_TopologyAttr("elements", guess_types(u.atoms.names))
+    if SOL is None:
+        water_selection = generate_water_selection_string()
+    else:
+        water_selection = "resname " + SOL
+    if OW is None:
+        oxygen_selection = "element O"
+        guessed_and_read_props = [
+            type(i)
+            for i in list(u._topology.read_attributes)
+            + list(u._topology.guessed_attributes)
+        ]
+        if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
+            u.add_TopologyAttr("elements", guess_types(u.atoms.names))
+    else:
+        oxygen_selection = "name " + OW
     ss: mda.AtomGroup = u.select_atoms(
-        f"element O and {generate_water_selection_string()} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
+        f"{oxygen_selection} and {water_selection} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
         updating=True,
     )
     D: DensityAnalysis = DensityAnalysis(
@@ -375,6 +389,9 @@ def extract_waters_from_trajectory(
     topology: str | None = None,
     dist: float = 12.0,
     every: int = 1,
+    SOL: str = None,
+    OW: str = None,
+    HW: str = None,
     save_file: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Extract waters for clustering analysis.
@@ -391,7 +408,14 @@ def extract_waters_from_trajectory(
         dist (float, optional): Distance around the center of selection
             inside which water molecules will be sampled. Defaults to 12.0.
         every (int, optional): Take every ``every`` snapshot instead of
-            taking all the snapshots (every = 1) for alignment. Defaults to 1.
+            taking all the snapshots (every = 1) for alignment. Defaults
+            to 1.
+        SOL (str, optional): Residue name of the water residue. If ``None`` it
+            will be determined automatically. Defaults to None.
+        OW (str, optional): Name of the oxygen atom. If ``None`` it will
+            be determined automatically. Defaults to None.
+        HW (str, optional): Name of the hydrogen atom. If ``None`` it
+            will be determined automatically. Defaults to None.
         save_file (str | None, optional): File to which coordinates will
             be saved. If none doesn't save to a file. Defaults to None.
 
@@ -414,27 +438,42 @@ def extract_waters_from_trajectory(
         u = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
-    guessed_and_read_props = [
-        type(i)
-        for i in list(u._topology.read_attributes)
-        + list(u._topology.guessed_attributes)
-    ]
-    if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
-        u.add_TopologyAttr("elements", guess_types(u.atoms.names))
+    if SOL is None:
+        water_selection = generate_water_selection_string()
+    else:
+        water_selection = "resname " + SOL
+    if OW is None:
+        oxygen_selection = "element O"
+    else:
+        oxygen_selection = "name " + OW
+    if HW is None:
+        hydrogen_selection = "element H"
+    else:
+        hydrogen_selection = "name " + HW
+    if HW is None or OW is None:
+        guessed_and_read_props = [
+            type(i)
+            for i in list(u._topology.read_attributes)
+            + list(u._topology.guessed_attributes)
+        ]
+        if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
+            u.add_TopologyAttr("elements", guess_types(u.atoms.names))
     coordsH = []
     coordsO = []
     # loop over
     for _ in u.trajectory[::every]:
-        Os = u.select_atoms(
-            f"element O and {generate_water_selection_string()} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}"
+        oxygens = u.select_atoms(
+            f"{oxygen_selection} and {water_selection} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
         )
-        for i, j in zip(Os.positions, Os):
-            Hs = u.select_atoms(f"resid {j.resid} and element H ")
-            if len(Hs) != 2:
-                raise Exception(f"Water {j.resid} has too many hydrogens ({len(Hs)}).")
-            for hydrogen_positions in Hs.positions:
+        for oxygen in oxygens:
+            hydrogens = u.select_atoms(f"resid {oxygen.resid} and {hydrogen_selection}")
+            if len(hydrogens) != 2:
+                raise Exception(
+                    f"Water {oxygen.resid} has too many hydrogens ({len(hydrogens)})."
+                )
+            for hydrogen_positions in hydrogens.positions:
                 coordsH.append(hydrogen_positions)
-            coordsO.append(i)
+            coordsO.append(oxygen.position)
     Odata: np.ndarray = np.asarray(coordsO)
     coordsH = np.asarray(coordsH)
     Opos, H1, H2 = get_orientations_from_positions(Odata, coordsH)
@@ -710,7 +749,7 @@ def align_trajectory(
     ref.select_atoms(align_selection).segments.segids = "A"
     ref.add_TopologyAttr("chainIDs")
     ref.select_atoms(align_selection).chainIDs = "A"
-    if type(align_target) == int:
+    if isinstance(align_target, int):
         wr = ref.atoms
         wr.write(align_target_file_name, frames=ref.trajectory[[align_target]])
     if every > 1:
