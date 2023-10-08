@@ -392,8 +392,9 @@ def extract_waters_from_trajectory(
     SOL: str = None,
     OW: str = None,
     HW: str = None,
+    extract_only_O: bool = False,
     save_file: str | None = None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """Extract waters for clustering analysis.
 
     Calculates water (oxygen and hydrogen) coordinates for all the
@@ -416,13 +417,16 @@ def extract_waters_from_trajectory(
             be determined automatically. Defaults to None.
         HW (str, optional): Name of the hydrogen atom. If ``None`` it
             will be determined automatically. Defaults to None.
+        extract_only_O (bool, optional): If ``True`` only oxygen atom
+            positions. Defaults to False.
         save_file (str | None, optional): File to which coordinates will
             be saved. If none doesn't save to a file. Defaults to None.
 
     Returns:
         tuple[np.ndarray, np.ndarray]:
             returns xyz numpy arrays that contain coordinates of oxygens,
-            and combined array of hydrogen 1 and hydrogen 2
+            and combined array of hydrogen 1 and hydrogen 2 coordinates.
+            If ``extract_only_O`` is True, returns only oxygen coordinates.
 
     Example::
 
@@ -450,7 +454,7 @@ def extract_waters_from_trajectory(
         hydrogen_selection = "element H"
     else:
         hydrogen_selection = "name " + HW
-    if HW is None or OW is None:
+    if (HW is None and extract_only_O is False) or OW is None:
         guessed_and_read_props = [
             type(i)
             for i in list(u._topology.read_attributes)
@@ -458,7 +462,8 @@ def extract_waters_from_trajectory(
         ]
         if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
             u.add_TopologyAttr("elements", guess_types(u.atoms.names))
-    coordsH = []
+    if extract_only_O is False:
+        coordsH = []
     coordsO = []
     # loop over
     for _ in u.trajectory[::every]:
@@ -466,21 +471,27 @@ def extract_waters_from_trajectory(
             f"{oxygen_selection} and {water_selection} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
         )
         for oxygen in oxygens:
-            hydrogens = u.select_atoms(f"resid {oxygen.resid} and {hydrogen_selection}")
-            if len(hydrogens) != 2:
-                raise Exception(
-                    f"Water {oxygen.resid} has too many hydrogens ({len(hydrogens)})."
-                )
-            for hydrogen_positions in hydrogens.positions:
-                coordsH.append(hydrogen_positions)
             coordsO.append(oxygen.position)
+            if extract_only_O is False:
+                hydrogens = u.select_atoms(f"resid {oxygen.resid} and {hydrogen_selection}")
+                if len(hydrogens) != 2:
+                    raise Exception(
+                        f"Water {oxygen.resid} has too many hydrogens ({len(hydrogens)})."
+                    )
+                for hydrogen_positions in hydrogens.positions:
+                    coordsH.append(hydrogen_positions)
     Odata: np.ndarray = np.asarray(coordsO)
-    coordsH = np.asarray(coordsH)
-    Opos, H1, H2 = get_orientations_from_positions(Odata, coordsH)
+    if extract_only_O is False:
+        coordsH = np.asarray(coordsH)
+        Opos, H1, H2 = get_orientations_from_positions(Odata, coordsH)
     # SAVEs full XYZ coordinates, not O coordinates and h orientations!!!!!
-    if save_file is not None:
-        np.savetxt(save_file, np.c_[Opos, H1, H2])
-    return Odata, coordsH
+        if save_file is not None:
+            np.savetxt(save_file, np.c_[Opos, H1, H2])
+        return Odata, coordsH
+    else:
+        if save_file is not None:
+            np.savetxt(save_file, Odata)
+        return Odata
 
 
 def __align_mda(
