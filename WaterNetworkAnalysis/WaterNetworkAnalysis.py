@@ -415,8 +415,10 @@ def extract_waters_from_trajectory(
             will be determined automatically. Defaults to None.
         OW (str, optional): Name of the oxygen atom. If ``None`` it will
             be determined automatically. Defaults to None.
-        HW (str, optional): Name of the hydrogen atom. If ``None`` it
-            will be determined automatically. Defaults to None.
+        HW (str, optional): Name of the hydrogen atom in water. Names
+            checked will be the provided name and the name with a 1 or 2
+            appended. If ``None`` it will be determined automatically.
+            Defaults to None.
         extract_only_O (bool, optional): If ``True`` only oxygen atom
             positions. Defaults to False.
         save_file (str | None, optional): File to which coordinates will
@@ -453,7 +455,7 @@ def extract_waters_from_trajectory(
     if HW is None:
         hydrogen_selection = "element H"
     else:
-        hydrogen_selection = "name " + HW
+        hydrogen_selection = "name " + HW + " or name " + HW + "1 or name " + HW + "2"
     if (HW is None and extract_only_O is False) or OW is None:
         guessed_and_read_props = [
             type(i)
@@ -473,7 +475,9 @@ def extract_waters_from_trajectory(
         for oxygen in oxygens:
             coordsO.append(oxygen.position)
             if extract_only_O is False:
-                hydrogens = u.select_atoms(f"resid {oxygen.resid} and {hydrogen_selection}")
+                hydrogens = u.select_atoms(
+                    f"resid {oxygen.resid} and ({hydrogen_selection})"
+                )
                 if len(hydrogens) != 2:
                     raise Exception(
                         f"Water {oxygen.resid} has too many hydrogens ({len(hydrogens)})."
@@ -484,7 +488,7 @@ def extract_waters_from_trajectory(
     if extract_only_O is False:
         coordsH = np.asarray(coordsH)
         Opos, H1, H2 = get_orientations_from_positions(Odata, coordsH)
-    # SAVEs full XYZ coordinates, not O coordinates and h orientations!!!!!
+        # SAVEs full XYZ coordinates, not O coordinates and h orientations!!!!!
         if save_file is not None:
             np.savetxt(save_file, np.c_[Opos, H1, H2])
         return Odata, coordsH
