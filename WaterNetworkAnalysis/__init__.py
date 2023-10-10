@@ -12,4 +12,5 @@ from .WaterNetworkAnalysis import (
     get_selection_string_from_resnums,
     make_results_pdb_MDA,
     read_results_and_make_pdb,
+    generate_water_selection_string,
 )
