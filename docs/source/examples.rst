@@ -46,7 +46,7 @@ To compute conserved waters from MD trajectories one has to first align the whol
    )
    # start the clustering procedure
    Nsnaps = 200
-   WC=WaterClustering(nsnaps=Nsnaps, save_results_after_done=False)
+   WC=WaterClustering(nsnaps=Nsnaps)
    # perform multi stage reclustering
    WC.multi_stage_reclustering(*get_orientations_from_positions(coordO,coordH))
    # visualise results with pymol
@@ -57,8 +57,7 @@ To compute conserved waters from MD trajectories one has to first align the whol
    )
    # manually save the results for later use
    res_fname = "results.dat"
-   res_type_fname = "types.dat"
-   WC.save_results(res_fname,res_type_fname)
+   WC.save_results(res_fname)
 
 With the following result:
 
@@ -88,7 +87,7 @@ or from previously saved files using the convenience function :py:meth:`WaterNet
 
 .. code:: python 
 
-   from WaterNetworkAnalysis import 
+   from WaterNetworkAnalysis import read_results_and_make_pdb
    read_results_and_make_pdb(
        fname=res_fname,
        typefname=res_type_fname,
