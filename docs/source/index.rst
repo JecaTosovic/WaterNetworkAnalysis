@@ -8,6 +8,8 @@ Welcome to WaterNetworkAnalysis's documentation!
    :caption: Introduction:
 
    quickstart
+   installation
+   PyMOLplugin
    examples
 
 .. toctree::
