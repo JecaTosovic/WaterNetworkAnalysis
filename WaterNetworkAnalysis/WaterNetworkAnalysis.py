@@ -4,6 +4,9 @@ import os
 import stat
 
 import MDAnalysis as mda
+import MDAnalysis
+import MDAnalysis.core.topologyattrs
+from MDAnalysis.topology.guessers import guess_types
 import numpy as np
 from MDAnalysis.analysis.density import DensityAnalysis, Density
 from scipy.ndimage import gaussian_filter
@@ -12,6 +15,51 @@ from ConservedWaterSearch.utils import (
     get_orientations_from_positions,
     read_results,
 )
+
+
+def generate_water_selection_string():
+    """
+    Returns a selection string for selecting water molecules based on common
+    residue names used across different simulation packages.
+
+    This function generates a string that can be used in MDAnalysis's
+    select_atoms method to select water molecules from a molecular dynamics
+    simulation. The selection string is based on common residue names used
+    for water molecules across different simulation packages and water models.
+
+    Returns:
+        str: Selection command in form of a string, which can be used with
+             MDAnalysis's select_atoms method.
+
+    Example::
+
+        # Generate water selection string
+        water_selection_string = generate_water_selection_string()
+
+        # Use the selection string to select water molecules
+        u = mda.Universe('topology_file.top', 'trajectory_file.trr')
+        water_molecules = u.select_atoms(water_selection_string)
+    """
+    # List of common residue names for water
+    water_resnames = [
+        "SOL",
+        "WAT",
+        "H2O",
+        "TIP3",
+        "TIP4",
+        "TIP5",
+        "SPC",
+        "SPCE",
+        "HOH",
+        "DOD",
+        "T3P",
+        "T4P",
+    ]
+
+    # Creating the selection string
+    selection_string = " or ".join(f"resname {resname}" for resname in water_resnames)
+
+    return selection_string
 
 
 def get_selection_string_from_resnums(
@@ -104,8 +152,9 @@ def calculate_oxygen_density_map(
     topology: str | None = None,
     dist: float = 12.0,
     delta: float = 0.4,
-    OW: str = "OW",
-    SOL: str = "SOL",
+    every: int = 1,
+    SOL: str = None,
+    OW: str = None,
     output_name: str = "water.dx",
 ) -> Density:
     """Generate oxygen density maps.
@@ -122,10 +171,13 @@ def calculate_oxygen_density_map(
             which the oxygen will be selected. Defaults to 12.0.
         delta (float, optional): bin size for density map. Defaults to
             0.4 Angstroms.
-        OW (str, optional): name of oxygens for selecting water oxygens.
-            Defaults to "OW".
-        SOL (str, optional): name of the solvent group for selecting
-            solvent oxygens. Defaults to "SOL".
+        every (int, optional): Take every ``n_every`` snapshot instead
+            of taking all the snapshots (every = 1) for alignment.
+            Defaults to 1.
+        SOL (str, optional): Residue name of the water residue. If ``None`` it
+            will be determined automatically. Defaults to None.
+        OW (str, optional): Name of the oxygen atom. If ``None`` it will
+            be determined automatically. Defaults to None.
         output_name (str, optional): name of the output file, it should
             end with '.dx' . Defaults to "water.dx".
 
@@ -147,19 +199,23 @@ def calculate_oxygen_density_map(
         u: mda.Universe = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
+    if SOL is None:
+        water_selection = generate_water_selection_string()
+    else:
+        water_selection = "resname " + SOL
+    if OW is None:
+        oxygen_selection = "element O"
+        guessed_and_read_props = [
+            type(i)
+            for i in list(u._topology.read_attributes)
+            + list(u._topology.guessed_attributes)
+        ]
+        if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
+            u.add_TopologyAttr("elements", guess_types(u.atoms.names))
+    else:
+        oxygen_selection = "name " + OW
     ss: mda.AtomGroup = u.select_atoms(
-        "name "
-        + OW
-        + " and resname "
-        + SOL
-        + " and point "
-        + str(selection_center[0])
-        + " "
-        + str(selection_center[1])
-        + " "
-        + str(selection_center[2])
-        + " "
-        + str(dist),
+        f"{oxygen_selection} and {water_selection} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
         updating=True,
     )
     D: DensityAnalysis = DensityAnalysis(
@@ -170,7 +226,7 @@ def calculate_oxygen_density_map(
         ydim=dist * 2,
         zdim=dist * 2,
     )
-    D.run()
+    D.run(step=every)
     # oxygen vdw radius
     vdw_radius = 1.52
     sigma = vdw_radius / delta
@@ -332,10 +388,13 @@ def extract_waters_from_trajectory(
     trajectory: str,
     topology: str | None = None,
     dist: float = 12.0,
-    SOL: str = "SOL",
-    OW: str = "OW",
+    every: int = 1,
+    SOL: str = None,
+    OW: str = None,
+    HW: str = None,
+    extract_only_O: bool = False,
     save_file: str | None = None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """Extract waters for clustering analysis.
 
     Calculates water (oxygen and hydrogen) coordinates for all the
@@ -349,16 +408,27 @@ def extract_waters_from_trajectory(
         topology (str | None, optional): Topology file name. Defaults to None.
         dist (float, optional): Distance around the center of selection
             inside which water molecules will be sampled. Defaults to 12.0.
-        SOL (str, optional): Residue name for waters. Defaults to "SOL".
-        OW (str, optional): Name of the oxygen atom in water molecules.
-            Defaults to "OW".
+        every (int, optional): Take every ``every`` snapshot instead of
+            taking all the snapshots (every = 1) for alignment. Defaults
+            to 1.
+        SOL (str, optional): Residue name of the water residue. If ``None`` it
+            will be determined automatically. Defaults to None.
+        OW (str, optional): Name of the oxygen atom. If ``None`` it will
+            be determined automatically. Defaults to None.
+        HW (str, optional): Name of the hydrogen atom in water. Names
+            checked will be the provided name and the name with a 1 or 2
+            appended. If ``None`` it will be determined automatically.
+            Defaults to None.
+        extract_only_O (bool, optional): If ``True`` only oxygen atom
+            positions. Defaults to False.
         save_file (str | None, optional): File to which coordinates will
             be saved. If none doesn't save to a file. Defaults to None.
 
     Returns:
         tuple[np.ndarray, np.ndarray]:
             returns xyz numpy arrays that contain coordinates of oxygens,
-            and combined array of hydrogen 1 and hydrogen 2
+            and combined array of hydrogen 1 and hydrogen 2 coordinates.
+            If ``extract_only_O`` is True, returns only oxygen coordinates.
 
     Example::
 
@@ -374,43 +444,58 @@ def extract_waters_from_trajectory(
         u = mda.Universe(topology, trajectory)
     else:
         u = mda.Universe(trajectory)
-    coordsH = []
+    if SOL is None:
+        water_selection = generate_water_selection_string()
+    else:
+        water_selection = "resname " + SOL
+    if OW is None:
+        oxygen_selection = "element O"
+    else:
+        oxygen_selection = "name " + OW
+    if HW is None:
+        hydrogen_selection = "element H"
+    else:
+        hydrogen_selection = "name " + HW + " or name " + HW + "1 or name " + HW + "2"
+    if (HW is None and extract_only_O is False) or OW is None:
+        guessed_and_read_props = [
+            type(i)
+            for i in list(u._topology.read_attributes)
+            + list(u._topology.guessed_attributes)
+        ]
+        if MDAnalysis.core.topologyattrs.Elements not in guessed_and_read_props:
+            u.add_TopologyAttr("elements", guess_types(u.atoms.names))
+    if extract_only_O is False:
+        coordsH = []
     coordsO = []
-    waters = u.select_atoms(f"resname {SOL}")
-    if len(waters.bonds) == 0:
-        waters.guess_bonds()
     # loop over
-    for nn, k in enumerate(u.trajectory):
-        Os = u.select_atoms(
-            "name "
-            + str(OW)
-            + " and resname "
-            + str(SOL)
-            + " and point "
-            + str(selection_center[0])
-            + " "
-            + str(selection_center[1])
-            + " "
-            + str(selection_center[2])
-            + " "
-            + str(dist)
+    for _ in u.trajectory[::every]:
+        oxygens = u.select_atoms(
+            f"{oxygen_selection} and {water_selection} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
         )
-        for i, j in zip(Os.positions, Os):
-            Hs = j.bonded_atoms
-            if len(Hs) != 2:
-                raise Exception(
-                    f"Water {j} in snapshot {i} has too many hydrogens ({len(Hs)})."
+        for oxygen in oxygens:
+            coordsO.append(oxygen.position)
+            if extract_only_O is False:
+                hydrogens = u.select_atoms(
+                    f"resid {oxygen.resid} and ({hydrogen_selection})"
                 )
-            for hydrogen_positions in Hs.positions:
-                coordsH.append(hydrogen_positions)
-            coordsO.append(i)
+                if len(hydrogens) != 2:
+                    raise Exception(
+                        f"Water {oxygen.resid} has too many hydrogens ({len(hydrogens)})."
+                    )
+                for hydrogen_positions in hydrogens.positions:
+                    coordsH.append(hydrogen_positions)
     Odata: np.ndarray = np.asarray(coordsO)
-    coordsH = np.asarray(coordsH)
-    Opos, H1, H2 = get_orientations_from_positions(Odata, coordsH)
-    # SAVEs full XYZ coordinates, not O coordinates and h orientations!!!!!
-    if save_file is not None:
-        np.savetxt(save_file, np.c_[Opos, H1, H2])
-    return Odata, coordsH
+    if extract_only_O is False:
+        coordsH = np.asarray(coordsH)
+        Opos, H1, H2 = get_orientations_from_positions(Odata, coordsH)
+        # SAVEs full XYZ coordinates, not O coordinates and h orientations!!!!!
+        if save_file is not None:
+            np.savetxt(save_file, np.c_[Opos, H1, H2])
+        return Odata, coordsH
+    else:
+        if save_file is not None:
+            np.savetxt(save_file, Odata)
+        return Odata
 
 
 def __align_mda(
@@ -679,7 +764,7 @@ def align_trajectory(
     ref.select_atoms(align_selection).segments.segids = "A"
     ref.add_TopologyAttr("chainIDs")
     ref.select_atoms(align_selection).chainIDs = "A"
-    if type(align_target) == int:
+    if isinstance(align_target, int):
         wr = ref.atoms
         wr.write(align_target_file_name, frames=ref.trajectory[[align_target]])
     if every > 1:
@@ -774,12 +859,6 @@ def align_and_extract_waters(
             ``center_for_water_selection`` to be used for extraction of
             water molecules. Defaults to 12.0.
         SOL (str, optional): Residue name for waters. Defaults to "SOL".
-        OW (str, optional): Name of the oxygen atom in water molecules. Defaults
-             to "OW".
-        HW1 (str, optional): Name of hydrogen 1 atom in water
-            molecules. Defaults to "HW1".
-        HW2 (str, optional): Name of hydrogen 2 atom in water molecules.
-            Defaults to "HW2".
         save_file (str | None, optional): File to which coordinates
             will be saved. If none doesn't save to a file. Defaults to None.
 
@@ -793,12 +872,18 @@ def align_and_extract_waters(
     Example::
 
         # Generate water coordinates for clustering analysis from unaligned trajectory
-        resids = [8,12,143,144] align_and_extract_waters(
+        resids = [8,12,143,144]
+        align_and_extract_waters(
             get_center_of_selection(get_selection_string_from_resnums(resids)),
-            trajectory = 'trajectory.xtc', aligned_trajectory_filename =
-            'aligned_trj.xtc', align_target_file_name = 'aligned.pdb',
-            topology = 'topology.tpr', every = 1, align_mode = "mda",
-            align_target= 0, align_selection = "protein", dist = 10.0,
+            trajectory = 'trajectory.xtc',
+            aligned_trajectory_filename = 'aligned_trj.xtc',
+            align_target_file_name = 'aligned.pdb',
+            topology = 'topology.tpr',
+            every = 1,
+            align_mode = "mda",
+            align_target= 0,
+            align_selection = "protein",
+            dist = 10.0,
         )
     """
     align_trajectory(
@@ -818,9 +903,6 @@ def align_and_extract_waters(
         dist=dist,
         topology=topology,
         SOL=SOL,
-        OW=OW,
-        HW1=HW1,
-        HW2=HW2,
     )
 
 
