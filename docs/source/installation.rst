@@ -1,5 +1,11 @@
 Installation
 ============
+WaterNetworkAnalysis can be installed as a python package or as a PyMOL
+plugin.
+
+Python package installation
+---------------------------
+
 The easiest ways to install **WaterNetworkAnalysis** is using :code:`conda` from conda-forge:
 
 .. code:: bash
@@ -27,43 +33,44 @@ Finally, to install WNA via :code:`pip` use:
 For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
 
 PyMOL plugin installation
-=========================
+-------------------------
 
 This guide provides detailed installation instructions for Linux, Mac,
 and Windows users. We recommend using `conda` or `mamba` to create a new
 environment with at least Python 3.9.
 
 Note that PyMOL which can be downloaded from the `PyMOL website
-<https://pymol.org/2/>`_ comes with python 3.7 which is not supported by
-WaterNetworkAnalysis and ConservedWaterSearch. For this reason users
-will have to install mamba/conda and create a new environment with
+<https://pymol.org/2/>`_ comes with python 3.7 which is not supported by 
+WaterNetworkAnalysis or ConservedWaterSearch. For this reason users
+will have to install `mamba/conda` and create a new environment with
 python version greater or equal to 3.9 and install PyMOL in that environment.
-The plugin has been tested with PyMOL 2.5.0.
+The plugin has been tested with PyMOL version > 2.5.0.
 
 Prerequisites
--------------
+.............
 
-- Ensure you have `conda` or `mamba` installed. If not, download and
-  install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or
-  [Anaconda](https://www.anaconda.com/products/distribution).
+- Ensure you have ``conda`` or ``mamba`` installed. If not, download and
+  install `miniforge <https://conda-forge.org/miniforge/>`_ , or
+  `miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ or
+  `Anaconda <https://www.anaconda.com/products/distribution>`_.
 
 - For users who wish to use the paid version of PyMOL, ensure you have a
-  valid license. Follow the instructions provided by the PyMOL vendor to
-  activate your license.
+  valid license.
 
-- Once conda/mamba has been installed, make sure you activate the
-  installation by either sourcing your .bashrc or restarting your terminal.
+- Once ``conda/mamba`` has been installed, make sure you activate the
+  installation by either sourcing your ``.bashrc`` or restarting your terminal.
 
 Installation Steps
-------------------
+..................
 
-1. **Create a new conda environment**:
+1. **Create a new conda environment (use mamba instead of conda if you
+   opted for mamba)**:
 
    .. code-block:: bash
 
       conda create -n myenv python=3.9
 
-   Replace `myenv` with your preferred environment name.
+   Replace ``myenv`` with your preferred environment name.
 
 2. **Activate the environment**:
 
@@ -79,43 +86,53 @@ Installation Steps
 
         activate myenv
 
-3. **Install the required packages**:
-
-   Use the following command to install the necessary packages:
-
-   .. code-block:: bash
-
-      conda install -c conda-forge pymol-open-source
-      ConservedWaterSearch WaterNetworkAnalysis
-
-
-4. **Install PyMOL**:
+3. **Install PyMOL**:
 
    - **Open-source version**:
 
      .. code-block:: bash
 
-        conda install -c conda-forge pymol
+        conda install -c conda-forge pymol-open-source
+
 
    - **Paid version**:
 
-     Follow the installation instructions provided by the PyMOL vendor.
+     .. code-block:: bash
 
-5. **Verify Installation**:
+        conda install -c schrodinger pymol-bundle
 
-   After installing all the required packages, you can verify the PyMOL
-   installation by simply starting it from the terminal:
 
-   .. code-block:: bash
+   macOS users may need to install the extra packages. For more
+   information see PyMOL documentation `here
+   <https://pymol.org/conda/>`_. To test if the installation was
+   successful users should just be able to type the following in their
+   terminal:
+   
+     .. code-block:: bash
+    
+        pymol
 
-      pymol
+   
+   Users with a license should download their license file from the
+   `PyMOL website <https://pymol.org/2/>`_ and activate it by going to
+   Help -> Install new License File in main PyMOL window.
+
+4. **Install dependencies**:
+
+   WaterNetworkAnalysis is the main dependency and can be installed via:
+
+     .. code-block:: bash
+
+        conda install -c conda-forge WaterNetworkAnalysis
 
 
 6. **Install the WaterNetworkAnalysis plugin in PyMOL**:
 
-   In PyMOL, go to `Plugin > Plugin Manager > Install New Plugin` and
-    select the `WaterNetworkAnalysis.py` file from the
-    `WaterNetworkAnalysis` folder in the installation directory.
+   The plugin is a single file located `here
+   <https://github.com/JecaTosovic/WNA_PyMOL_plugin>`_. In PyMOL, go to
+   `Plugin > Plugin Manager > Install New Plugin` and select the
+   ``WNA_PyMOL_plugin.py`` file from the ``WNA_PyMOL`` folder. The
+   plugin can then be accessed from the plugin drop-down menu.
 
 Troubleshooting
 ---------------
@@ -129,7 +146,7 @@ Troubleshooting
 
 
 Known Issues with dependencies
-==============================
+------------------------------
 
 :code:`AttributeError: 'super' object has no attribute '_ipython_display_'`
 Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`_). To resolve install version of :code:`ipywidgets<8` using :code:`conda`: 
