@@ -14,32 +14,32 @@ The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input
   :width: 600
 
 Important links
-===============
+---------------
 	- `Documentation <https://waternetworkanalysis.readthedocs.io/en/latest/>`_: hosted on Read The Docs
 	- `GitHub repository <https://github.com/JecaTosovic/WaterNetworkAnalysis>`_: source code/contribute code
 	- `Issue tracker <https://github.com/JecaTosovic/WaterNetworkAnalysis/issues>`_: Report issues/ request features
 
 Related Tools
-=============
+-------------
 	- `ConservedWaterSearch <https://github.com/JecaTosovic/ConservedWaterSearch>`__: Analysis of conserved waters from simulation trajectories. For docs see `here <https://conservedwatersearch.readthedocs.io/en/latest/>`__.
 
 Citation
-========
+--------
 For citations and more infromation see `ConservedWaterSearch citation <https://conservedwatersearch.readthedocs.io/en/latest/citing.html>`_.
 
-Installation
-------------
+Installation of the Python package
+----------------------------------
 The easiest ways to install **WaterNetworkAnalysis** is using :code:`conda` from conda-forge:
 
 .. code:: bash
 
     conda install -c conda-forge WaterNetworkAnalysis
 
-Alternatively, WNA is also available on PyPi via :code:`pip`. However, because WNA depends on ConservedWaterSearch which requires hdbscan whose PyPi installation requires a C++ compiler (`see here <https://conservedwatersearch.readthedocs.io/en/latest/installation.html#prerequisits>`__ for more information) aditional dependencies have to be installed:
+Alternatively, WNA is also available on PyPi via :code:`pip`:
 
 .. code:: bash
 
-   conda install -c conda-forge cxx-compiler
+   pip install WaterNetworkAnalysis
 
 `Pymol <https://pymol.org/2/>`__ is an optional dependency for visualisation and is not present on PyPi, however WNA can be installed and used without it (bar pymol visualisation features). Pymol can be installed using :code:`conda`:
 
@@ -47,16 +47,14 @@ Alternatively, WNA is also available on PyPi via :code:`pip`. However, because W
 
    conda install -c conda-forge pymol-open-source
  
-Finally, to install WNA via :code:`pip` use:
-
-.. code:: bash
-
-   pip install WaterNetworkAnalysis
-
 For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`__.
 
+Installation of the PyMOL plugin
+--------------------------------
+See documentation for `detailed instructions <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
+
 Known Issues with dependencies
-==============================
+------------------------------
 
 :code:`AttributeError: 'super' object has no attribute '_ipython_display_'`
 Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`__). To resolve install version of :code:`ipywidgets<8` using :code:`conda`: 
@@ -72,7 +70,7 @@ or :code:`pip`:
    pip install ipywidgets==7.6.0
 
 Example
-=======
+-------
 The following example shows how to use **WaterNetworkAnalysis** to prepare a MD trajectory and analyse the results for determination of conserved water networks.
 
 .. code:: python
@@ -118,7 +116,7 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
    )
    # start the clustering procedure
    Nsnaps = 200
-   WC=WaterClustering(nsnaps= Nsnaps)
+   WC=WaterClustering(nsnaps=Nsnaps)
    # perform multi stage reclustering
    WC.multi_stage_reclustering(*get_orientations_from_positions(coordO,coordH))
    # visualise results with pymol

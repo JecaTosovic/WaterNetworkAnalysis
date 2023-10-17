@@ -4,6 +4,10 @@ Installation
 WaterNetworkAnalysis can be installed as a python package or as a PyMOL
 plugin.
 
+.. include:: ../../README.rst
+    :start-line: 29
+    :end-before: Installation of the PyMOL plugin
+
 Python package installation
 ---------------------------
 
