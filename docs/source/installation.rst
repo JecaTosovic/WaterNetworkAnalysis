@@ -1,5 +1,6 @@
 Installation
 ============
+
 WaterNetworkAnalysis can be installed as a python package or as a PyMOL
 plugin.
 
@@ -12,11 +13,11 @@ The easiest ways to install **WaterNetworkAnalysis** is using :code:`conda` from
 
     conda install -c conda-forge WaterNetworkAnalysis
 
-Alternatively, WNA is also available on PyPi via :code:`pip`. However, because WNA depends on `ConservedWaterSearch <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_ which requires hdbscan whose PyPi installation requires a C++ compiler (see `here <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_ for more information) aditional dependencies have to be installed:
+Alternatively, WNA is also available on PyPi via :code:`pip`:
 
 .. code:: bash
 
-   conda install -c conda-forge cxx-compiler
+   pip install WaterNetworkAnalysis
 
 `Pymol <https://pymol.org/2/>`_ is an optional dependency for visualisation and is not present on PyPi, however WNA can be installed and used without it (bar pymol visualisation features). Pymol can be installed using :code:`conda`:
 
@@ -24,12 +25,6 @@ Alternatively, WNA is also available on PyPi via :code:`pip`. However, because W
 
    conda install -c conda-forge pymol-open-source
  
-Finally, to install WNA via :code:`pip` use:
-
-.. code:: bash
-
-   pip install WaterNetworkAnalysis
-
 For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
 
 PyMOL plugin installation
@@ -66,9 +61,9 @@ Installation Steps
 1. **Create a new conda environment (use mamba instead of conda if you
    opted for mamba)**:
 
-   .. code-block:: bash
+     .. code-block:: bash
 
-      conda create -n myenv python=3.9
+        conda create -n myenv python=3.9
 
    Replace ``myenv`` with your preferred environment name.
 
@@ -103,10 +98,9 @@ Installation Steps
 
 
    macOS users may need to install the extra packages. For more
-   information see PyMOL documentation `here
-   <https://pymol.org/conda/>`_. To test if the installation was
-   successful users should just be able to type the following in their
-   terminal:
+   information see `PyMOL documentation <https://pymol.org/conda/>`_. To
+   test if the installation was successful users should just be able to
+   type the following in their terminal:
    
      .. code-block:: bash
     
