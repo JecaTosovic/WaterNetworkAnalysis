@@ -3,7 +3,6 @@ channels:
   - conda-forge
 
 dependencies:
-  - pymol-open-source>=2.5
   - pip
   - pip:
     - -r ../../../requirements/requirements-test.txt
