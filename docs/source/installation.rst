@@ -135,13 +135,9 @@ Installation Steps
 Troubleshooting
 ---------------
 
-- If you encounter any issues, ensure you're using the correct Python
-  version and that all packages are installed with their specified
-  versions.
-
-- For further assistance, refer to the official documentation or contact
-  the support team.
-
+If you encounter any issues, ensure you're using the correct Python
+version and that all packages are installed with their specified
+versions.
 
 Known Issues with dependencies
 ------------------------------
