@@ -1,5 +1,5 @@
 WaterNetworkAnalysis
-====================
+--------------------
 .. image:: https://readthedocs.org/projects/waternetworkanalysis/badge/?version=latest
     :target: https://waternetworkanalysis.readthedocs.io/en/latest/?badge=latest
 .. image:: https://badge.fury.io/py/WaterNetworkAnalysis.svg
@@ -10,7 +10,7 @@ WaterNetworkAnalysis
 
 The WaterNetworkAnalysis (WNA) Python package serves as a set of tools for input preparation and further analysis for `ConservedWaterSearch <https://conservedwatersearch.readthedocs.io/en/latest/>`__ (CWS) python package which identifies conserved water molecules from Molecular Dynamics (MD) trajectories.
 
-.. image:: https://github.com/JecaTosovic/WaterNetworkAnalysis/blob/master/docs/source/figs/Scheme.png
+.. image::  https://raw.githubusercontent.com/JecaTosovic/WaterNetworkAnalysis/master/docs/source/figs/Scheme.png
   :width: 600
 
 Important links
@@ -124,5 +124,5 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
 
 
 
-.. image:: https://github.com/JecaTosovic/WaterNetworkAnalysis/blob/master/docs/source/figs/Results.png
+.. image:: https://raw.githubusercontent.com/JecaTosovic/WaterNetworkAnalysis/master/docs/source/figs/Results.png
   :width: 600
