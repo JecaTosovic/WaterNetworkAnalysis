@@ -40,7 +40,8 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosummary",
     "sphinx.ext.autosectionlabel",
-    #"sphinxcontrib.bibtex",
+    "sphinx_tabs.tabs",
+    # "sphinxcontrib.bibtex",
 ]
 
 # Napoleon settings
@@ -90,5 +91,8 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable", None),
     "matplotlib": ("https://matplotlib.org", None),
     "MDAnalysis": ("https://docs.mdanalysis.org/stable", None),
-    "ConservedWaterSearch": ("https://conservedwatersearch.readthedocs.io/en/latest", None),
+    "ConservedWaterSearch": (
+        "https://conservedwatersearch.readthedocs.io/en/latest",
+        None,
+    ),
 }
