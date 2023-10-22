@@ -1,7 +1,9 @@
-Water Network Analysis Plugin for PyMOL
-=======================================
+PyMOL plugin
+============
 
-This plugin provides tools for analyzing conserved waters in biomolecular structures.
+This plugin provides tools for identification, classification and analysis of
+conserved water molecules and their networks from molecular dynamics
+simulation trajectories.
 
 The main interface consists of the following sections:
 
@@ -54,7 +56,7 @@ interest.
     coordinates of oxygen atoms for every frame to be studied. For
     analysis of water types (recommended) each row should contain the
     x, y, and z coordinates of oxygen and hydrogen atoms. For more
-    information see `ConservedWaterSearch documentation <https://conservedwatersearch.readthedocs.io/en/latest/examples.html>`_.
+    information see `ConservedWaterSearch docs <https://conservedwatersearch.readthedocs.io/en/latest/examples.html>`_.
 
     **Number of snapshots**: Number of snapshots in the trajectory used
     to generate the CWS input data file.
@@ -67,7 +69,7 @@ interest.
     **Partial Results File**: Browse and select the partial results file
     for restarting the analysis. This file should contain the partial
     results of the clustering analysis. For more information see
-    `ConservedWaterSearch documentation
+    `ConservedWaterSearch website 
     <https://conservedwatersearch.readthedocs.io/en/latest/examples.html>`_.
     
     **CWS input data file**: Browse and select the CWS input data file.
@@ -147,7 +149,7 @@ Compute results
    .. tab:: Water Clustering
 
      Compute conserved waters and classify them into several groups. More
-     information can be found in the `ConservedWaterSearch documentation <https://conservedwatersearch.readthedocs.io/en/latest/conservedwaters.html>`_.
+     information can be found in the `ConservedWaterSearch documentation webpage <https://conservedwatersearch.readthedocs.io/en/latest/conservedwaters.html>`_.
    
      - **Clustering Method**. Choose the clustering method. Options include:
    
