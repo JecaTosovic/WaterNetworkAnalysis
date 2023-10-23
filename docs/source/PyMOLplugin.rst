@@ -35,8 +35,7 @@ interest.
 
   .. tab:: **From Files**
       
-    Provide trajectory and topology files. The geometric mean of the
-    selected atoms will be used as the center of water selection. 
+    Provide trajectory and topology files. 
 
     **Trajectory and Topology Files**: Browse and select the appropriate
     files for your analysis. For list of supported file types check
