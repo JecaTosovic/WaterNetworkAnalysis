@@ -24,9 +24,7 @@ interest.
   .. tab:: **PyMOL Selection**
 
     Select atoms or molecules in PyMOL. The selection string will be
-    automatically converted to MDanalysis selection string. The
-    geometric mean of the selected atoms will be used as the center of
-    water selection.
+    automatically converted to MDanalysis selection string. 
 
     **PyMOL Selection**: Enter the selection string which contains
     waters (can contain other elements as well) in your PyMOL window.
