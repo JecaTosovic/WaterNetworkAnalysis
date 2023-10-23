@@ -40,7 +40,10 @@ interest.
 
     **Trajectory and Topology Files**: Browse and select the appropriate
     files for your analysis. For list of supported file types check
-    MDanalysis documentation `here <https://www.mdanalysis.org/docs/documentation_pages/coordinates/init.html#supported-file-formats>`_.
+    MDanalysis documentation `here
+    <https://www.mdanalysis.org/docs/documentation_pages/coordinates/init.html#supported-file-formats>`_.
+    File formats that can contain both trajectory and topology data such
+    as PDB, should only be provided using trajectory field.
 
     **Every Nth Frame**: Specify how many frames to skip for analysis.
 
