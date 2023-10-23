@@ -105,7 +105,7 @@ interpreting the data.
 
     Provide a MDanalysis selection string. The
     geometric mean of the selected atoms will be used as the center.
-    This selection is handeled by MDanalysis whos selection language is
+    This selection is handeled by MDanalysis whose selection language is
     similar in most instances but not identical to PyMOL. For more
     information see `MDanalysis <https://www.mdanalysis.org/docs/documentation_pages/selections.html#simple-selections>`_.
 
