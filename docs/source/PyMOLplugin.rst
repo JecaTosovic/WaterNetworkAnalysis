@@ -1,6 +1,9 @@
 PyMOL plugin
 ============
 
+.. _ConservedWaterSearch examples: https://conservedwatersearch.readthedocs.io/en/latest/examples.html
+.. _ConservedWaterSearch documentation: https://conservedwatersearch.readthedocs.io/en/latest/conservedwaters.html
+
 This plugin provides tools for identification, classification and analysis of
 conserved water molecules and their networks from molecular dynamics
 simulation trajectories.
@@ -23,12 +26,14 @@ interest.
 
   .. tab:: **PyMOL Selection**
 
-    A PyMOL selection is first exported to a PDB file and waters are
-    extracted using water selection panel using MDAnalysis.
+    A PyMOL selection is first exported to a PDB file and water
+    molecules are extracted via the water selection panel with
+    MDAnalysis.
 
-    **PyMOL Selection**: Enter the selection string which contains
-    waters (can contain other elements as well) in your PyMOL window. We
-    recommend selection contains system as well as waters of interest.
+    **PyMOL Selection**: Enter the name of the PyMOL object or a
+    selection string which contains waters (can contain other elements
+    as well) in your PyMOL window. It is recommended that the selection
+    includes both the system and the water molecules of interest.
 
     **Test Input**: Click this button to test the provided input.
 
@@ -39,7 +44,7 @@ interest.
     **Trajectory and Topology Files**: Browse and select the appropriate
     files for your analysis. For list of supported file types check
     MDAnalysis documentation `here
-    <https://www.mdanalysis.org/docs/documentation_pages/coordinates/init.html#supported-file-formats>`_.
+    <https://www.mdanalysis.org/docs/documentation_pages/coordinates/init.html#supported-coordinate-formats>`_.
     File formats that can contain both trajectory and topology data such
     as PDB, should only be provided using trajectory field.
 
@@ -49,7 +54,7 @@ interest.
 
   .. tab:: **CWS Input**
         
-    Use a pre-existing ConservedWaterSearch input. Provide the clustering data set and specify the number of frames.
+    Use a pre-existing ConservedWaterSearch (CWS) input file. Provide the clustering data set and specify the number of frames.
 
     **CWS input data file**: Browse and select the CWS input data file.
     This data file should contain the clustering data set. If only
@@ -57,8 +62,7 @@ interest.
     coordinates of oxygen atoms for every frame to be studied. For
     analysis of water types (recommended) each row should contain the
     x, y, and z coordinates of oxygen and hydrogen atoms. For more
-    information see `ConservedWaterSearch docs
-    <https://conservedwatersearch.readthedocs.io/en/latest/examples.html>`_.
+    information see `ConservedWaterSearch examples`_.
     A CWS input data file can be generated when providing a PyMOL
     selection or trajectory and topology files by using the **Export CWS
     Input Data** button in the **Water Selection** section.
@@ -74,8 +78,7 @@ interest.
     **Partial Results File**: Browse and select the partial results file
     for restarting the analysis. This file should contain the partial
     results of the clustering analysis. For more information see
-    `ConservedWaterSearch website 
-    <https://conservedwatersearch.readthedocs.io/en/latest/examples.html>`_.
+    `ConservedWaterSearch examples`_.
     
     **CWS restart data file**: Browse and select the CWS restart data
     file. This file has the same structure as CWS input data file.
@@ -84,9 +87,7 @@ interest.
     coordinates of oxygen atoms for every frame to be studied. For
     analysis of water types (recommended) each row should contain the
     x, y, and z coordinates of oxygen and hydrogen atoms. For more
-    information see `ConservedWaterSearch documentation
-    <https://conservedwatersearch.readthedocs.io/en/latest/examples.html>`_.
-
+    information see `ConservedWaterSearch examples`_.
 
 Water Selection
 ---------------
@@ -123,11 +124,11 @@ interpreting the data.
 .. tabs::
   .. tab:: **Key Residue and Atom Names**
 
-    Users will have to provide residue name assigned to water molecules
-    and waters oxygen and hydrogen atom names. Alternatively, the plugin
-    offers an automatic option, which attempts to identify water residue
-    names and atom names using conventions from widely-used MD programs
-    and tools.
+    Users can provide residue name assigned to water molecules, as well
+    as the atom names for oxygen and hydrogen atoms in water molecules.
+    Alternatively, the plugin offers an automatic option, which attempts
+    to identify water residue names and atom names using conventions
+    from widely-used MD engines and tools.
   
     **Solvent Residue Name**: Specify the name of the solvent residue or
     opt for automatic detection.
@@ -157,8 +158,7 @@ Compute results
 
      Compute conserved waters and classify them into Fully, Half or
      Weakly Conserved water molecules. More information can be found in
-     the `ConservedWaterSearch documentation webpage
-     <https://conservedwatersearch.readthedocs.io/en/latest/conservedwaters.html>`_. 
+     the `ConservedWaterSearch documentation`_.
    
      - **Clustering Method**. Choose the clustering method. Options include:
    
@@ -197,9 +197,9 @@ Compute results
      for clustering. In principle users should choose ``FCW``, ``HCW`` and
      ``WCW``. In some cases it might make sense to leave ``WCW`` out. This
      will also reduce the time for the analysis by about a third. For more
-     information see `ConservedWaterSearch
-     <https://conservedwatersearch.readthedocs.io/en/latest/conservedwaters.html>`_.
-     ``OnlyO`` option clusters only oxygen atoms without considering hydrogen orientation data.
+     information see `ConservedWaterSearch documentation`_. ``OnlyO``
+     option clusters only oxygen atoms without considering hydrogen
+     orientation data. 
    
      **Clustering Options**: Depending on the chosen method, provide the
      necessary parameters. Best to leave as is. For large number of snapshots
