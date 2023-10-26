@@ -1,13 +1,17 @@
+================================================
 Welcome to WaterNetworkAnalysis's documentation!
 ================================================
 
-.. include:: quickstart.rst
+.. include:: ../../README.rst
+    :start-line: 2
 
 .. toctree::
    :maxdepth: 2
    :caption: Introduction:
 
    quickstart
+   installation
+   PyMOLplugin
    examples
 
 .. toctree::
