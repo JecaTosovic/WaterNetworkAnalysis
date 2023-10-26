@@ -51,7 +51,7 @@ For more information on CWS dependencies also see `CWS installation guide <https
 
 Installation of the PyMOL plugin
 --------------------------------
-See documentation for `detailed instructions <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
+See documentation for `detailed instructions <https://waternetworkanalysis.readthedocs.io/en/latest/quickstart.html#installation-of-the-pymol-plugin>`__.
 
 Known Issues with dependencies
 ------------------------------
