@@ -697,7 +697,6 @@ def align_trajectory(
             topology="topology.tpr",
         )
     """
-    import MDAnalysis.transformations as trans
 
     if topology is not None:
         mob = mda.Universe(topology, trajectory)

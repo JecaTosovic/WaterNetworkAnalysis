@@ -1,8 +1,8 @@
-sphinxcontrib-bibtex
-sphinx_rtd_theme
+ConservedWaterSearch
 jupyter_packaging
 matplotlib
-nglview
 MDAnalysis
-ConservedWaterSearch
+nglview
 sphinx-tabs
+sphinx_rtd_theme
+sphinxcontrib-bibtex
