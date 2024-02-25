@@ -734,8 +734,9 @@ def align_trajectory(
             raise Exception(
                 "unsupported trajectory file format. bond topology information is needed for alignment. Consider providing a topology file."
             )
-    elif not (
-        topology.upper().endswith(
+    elif isinstance(topology, str):
+        if not (
+            topology.upper().endswith(
             (
                 "DATA",
                 "DMS",
@@ -758,7 +759,7 @@ def align_trajectory(
             )
         )
     ):
-        raise Exception(
+            raise Exception(
             "unsupported topology file type. Bond information is needed for alignment."
         )
     ref.select_atoms(align_selection).segments.segids = "A"
