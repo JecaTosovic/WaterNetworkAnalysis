@@ -1,6 +1,7 @@
 target-version = "py38"
 
-extend-select = [
+[lint]
+select = [
     "A",
     "B",
     "D",
@@ -30,6 +31,10 @@ ignore = [
   "N802",
   "N813",
   "PLR0913",
+  "PLR0912",
+  "PLR0915",
+  "PLR2004",
+  "ISC001",
   "N803",
   "D200",
   "N999",
@@ -54,7 +59,7 @@ ignore = [
                  "D", # conf.py does not need documentation
     ]
 
-[pydocstyle]
+[lint.pydocstyle]
 convention = "google"
 
 [format]
