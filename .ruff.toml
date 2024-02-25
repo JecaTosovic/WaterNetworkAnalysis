@@ -1,0 +1,61 @@
+target-version = "py38"
+
+extend-select = [
+    "A",
+    "B",
+    "D",
+    "E501",
+    "EM",
+    "E",
+    "F",
+    "I",
+    "ICN",
+    "ISC",
+    "N",
+    "NPY",
+    "PL",
+    "PT",
+    "RET",
+    "RUF",
+    "UP",
+    "W",
+]
+
+ignore = [
+  "D107", # Do not document __init__ separately from the class.
+  "D105",
+  "D103",
+  "D100",
+  "N806",
+  "N802",
+  "N813",
+  "PLR0913",
+  "N803",
+  "D200",
+  "N999",
+]
+
+[lint.per-file-ignores]
+
+"*/__init__.py" = ["F401", # __init__.py import submodules for use by the package importer.
+"D104",
+"N999",
+"D205",
+"D415",
+"E501"
+]
+
+"tests/*.py" = ["PLR2004", # unit test value comparisons are not magic values
+                "N999",
+                "D104"
+]
+
+"docs/source/conf.py" = ["A001", # Allow copyright variable name
+                 "D", # conf.py does not need documentation
+    ]
+
+[pydocstyle]
+convention = "google"
+
+[format]
+quote-style = "double"

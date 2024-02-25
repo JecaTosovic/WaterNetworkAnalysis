@@ -1,5 +1,4 @@
-"""
-Unit and regression test for the WaterNetworkAnalysis package.
+"""Unit and regression test for the WaterNetworkAnalysis package.
 """
 
 import os

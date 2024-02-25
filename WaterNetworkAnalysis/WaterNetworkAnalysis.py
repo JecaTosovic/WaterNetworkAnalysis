@@ -3,23 +3,21 @@ from __future__ import annotations
 import os
 import stat
 
-import MDAnalysis as mda
 import MDAnalysis
+import MDAnalysis as mda
 import MDAnalysis.core.topologyattrs
-from MDAnalysis.topology.guessers import guess_types
 import numpy as np
-from MDAnalysis.analysis.density import DensityAnalysis, Density
-from scipy.ndimage import gaussian_filter
-
 from ConservedWaterSearch.utils import (
     get_orientations_from_positions,
     read_results,
 )
+from MDAnalysis.analysis.density import Density, DensityAnalysis
+from MDAnalysis.topology.guessers import guess_types
+from scipy.ndimage import gaussian_filter
 
 
 def generate_water_selection_string():
-    """
-    Returns a selection string for selecting water molecules based on common
+    """Returns a selection string for selecting water molecules based on common
     residue names used across different simulation packages.
 
     This function generates a string that can be used in MDAnalysis's
@@ -697,7 +695,6 @@ def align_trajectory(
             topology="topology.tpr",
         )
     """
-
     if topology is not None:
         mob = mda.Universe(topology, trajectory)
         ref: mda.Universe = mda.Universe(topology, trajectory)
