@@ -1,12 +1,36 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 10
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 10
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "monthly"
+  open-pull-requests-limit: 10
+  groups:
+    actions-version:
+      applies-to: version-updates
+      patterns:
+      - '*'
+    actions-security:
+      applies-to: security-updates
+      patterns:
+      - '*'
+- package-ecosystem: "pip"
+  directory: "/"
+  schedule:
+    interval: "monthly"
+  open-pull-requests-limit: 10
+  groups:
+    pip-version:
+      applies-to: version-updates
+      patterns:
+      - '*'
+      update-types:
+      - minor
+      - patch
+    pip-security:
+      applies-to: security-updates
+      patterns:
+      - '*'
+      update-types:
+      - minor
+      - patch
