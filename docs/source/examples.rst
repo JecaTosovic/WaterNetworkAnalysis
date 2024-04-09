@@ -11,7 +11,7 @@ To compute conserved waters from MD trajectories one has to first align the whol
    from WaterNetworkAnalysis import align_trajectory, get_center_of_selection,get_selection_string_from_resnums,extract_waters_from_trajectory
    from ConservedWaterSearch.water_clustering import WaterClustering
    from ConservedWaterSearch.utils import get_orientations_from_positions
-   
+
    # MD trajectory filename
    trajectory="md.xtc"
    # topology filename
@@ -39,9 +39,9 @@ To compute conserved waters from MD trajectories one has to first align the whol
    )
    # extract water coordinates of interest around selection centre
    coordO, coordH =  extract_waters_from_trajectory(
-       trajectory=alignedtrj, 
-       topology=topology, 
-       selection_center=selection_centre, 
+       trajectory=alignedtrj,
+       topology=topology,
+       selection_center=selection_centre,
        dist=distance
    )
    # start the clustering procedure
@@ -51,8 +51,8 @@ To compute conserved waters from MD trajectories one has to first align the whol
    WC.multi_stage_reclustering(*get_orientations_from_positions(coordO,coordH))
    # visualise results with pymol
    WC.visualise_pymol(
-       aligned_snap, 
-       active_site_ids=active_site_resnums, 
+       aligned_snap,
+       active_site_ids=active_site_resnums,
        dist=distance
    )
    # manually save the results for later use
@@ -85,7 +85,7 @@ Apart from direct visualisation from the :py:class:`WaterClustering` class funct
 
 or from previously saved files using the convenience function :py:meth:`WaterNetworkAnalysis.read_results_and_make_pdb`. This will create a pdb file with results:
 
-.. code:: python 
+.. code:: python
 
    from WaterNetworkAnalysis import read_results_and_make_pdb
    read_results_and_make_pdb(
@@ -124,11 +124,11 @@ For convenience one can perform alignment and extraction of water molecules in a
    )
    # align the trajectory, save the alignment reference configuration and extract relevent waters
    coordO, coordH = align_and_extract_waters(
-       selection_centre, 
-       trajectory, 
-       alignedtrj, 
-       aligned_snap, 
-       topology, 
+       selection_centre,
+       trajectory,
+       alignedtrj,
+       aligned_snap,
+       topology,
        dist = distance
    )
 
@@ -176,8 +176,8 @@ The density map can be visualised together with the conserved water clustering r
 .. code:: python
 
    WC.visualise_pymol(
-       aligned_snap, 
-       active_site_ids=active_site_resnums, 
-       dist=distance, 
+       aligned_snap,
+       active_site_ids=active_site_resnums,
+       dist=distance,
        density_map=watdens_fname
    )

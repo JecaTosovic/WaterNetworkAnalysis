@@ -28,7 +28,7 @@ Alternatively, WNA is also available on PyPi via :code:`pip`:
 .. code:: bash
 
    conda install -c conda-forge pymol-open-source
- 
+
 For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`_.
 
 PyMOL plugin installation
@@ -39,7 +39,7 @@ and Windows users. We recommend using `conda` or `mamba` to create a new
 environment with at least Python 3.9.
 
 Note that PyMOL which can be downloaded from the `PyMOL website
-<https://pymol.org/2/>`_ comes with python 3.7 which is not supported by 
+<https://pymol.org/2/>`_ comes with python 3.7 which is not supported by
 WaterNetworkAnalysis or ConservedWaterSearch. For this reason users
 will have to install `mamba/conda` and create a new environment with
 python version greater or equal to 3.9 and install PyMOL in that environment.
@@ -105,12 +105,12 @@ Installation Steps
    information see `PyMOL documentation <https://pymol.org/conda/>`_. To
    test if the installation was successful users should just be able to
    type the following in their terminal:
-   
+
      .. code-block:: bash
-    
+
         pymol
 
-   
+
    Users with a license should download their license file from the
    `PyMOL website <https://pymol.org/2/>`_ and activate it by going to
    Help -> Install new License File in main PyMOL window.
@@ -143,7 +143,7 @@ Known Issues with dependencies
 ------------------------------
 
 :code:`AttributeError: 'super' object has no attribute '_ipython_display_'`
-Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`_). To resolve install version of :code:`ipywidgets<8` using :code:`conda`: 
+Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`_). To resolve install version of :code:`ipywidgets<8` using :code:`conda`:
 
 .. code:: bash
 

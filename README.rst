@@ -46,7 +46,7 @@ Alternatively, WNA is also available on PyPi via :code:`pip`:
 .. code:: bash
 
    conda install -c conda-forge pymol-open-source
- 
+
 For more information on CWS dependencies also see `CWS installation guide <https://conservedwatersearch.readthedocs.io/en/latest/installation.html>`__.
 
 Installation of the PyMOL plugin
@@ -57,7 +57,7 @@ Known Issues with dependencies
 ------------------------------
 
 :code:`AttributeError: 'super' object has no attribute '_ipython_display_'`
-Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`__). To resolve install version of :code:`ipywidgets<8` using :code:`conda`: 
+Some versions of Jupyter notebook are incpompatible with ipython (`see here <https://stackoverflow.com/questions/74279848/nglview-installed-but-will-not-import-inside-juypter-notebook-via-anaconda-navig>`__). To resolve install version of :code:`ipywidgets<8` using :code:`conda`:
 
 .. code:: bash
 
@@ -81,7 +81,7 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
    from WaterNetworkAnalysis import extract_waters_from_trajectory
    from ConservedWaterSearch.water_clustering import WaterClustering
    from ConservedWaterSearch.utils import get_orientations_from_positions
-   
+
    # MD trajectory filename
    trajectory="md.xtc"
    # topology filename
@@ -110,8 +110,8 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
    # extract water coordinates of interest around selection centre
    coordO, coordH =  extract_waters_from_trajectory(
        trajectory=alignedtrj,
-       topology=topology, 
-       selection_center=selection_centre, 
+       topology=topology,
+       selection_center=selection_centre,
        dist=distance
    )
    # start the clustering procedure

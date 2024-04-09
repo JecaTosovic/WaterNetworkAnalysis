@@ -22,7 +22,7 @@ interest.
 
 **Selection Input Type**: Choose the type of input you want to provide. Options include:
 
-.. tabs:: 
+.. tabs::
 
   .. tab:: **PyMOL Selection**
 
@@ -38,8 +38,8 @@ interest.
     **Test Input**: Click this button to test the provided input.
 
   .. tab:: **From Files**
-      
-    Provide trajectory and topology files. 
+
+    Provide trajectory and topology files.
 
     **Trajectory and Topology Files**: Browse and select the appropriate
     files for your analysis. For list of supported file types check
@@ -53,7 +53,7 @@ interest.
     **Test Input**: Click this button to test the provided input.
 
   .. tab:: **CWS Input**
-        
+
     Use a pre-existing ConservedWaterSearch (CWS) input file. Provide the clustering data set and specify the number of frames.
 
     **CWS input data file**: Browse and select the CWS input data file.
@@ -79,7 +79,7 @@ interest.
     for restarting the analysis. This file should contain the partial
     results of the clustering analysis. For more information see
     `ConservedWaterSearch examples`_.
-    
+
     **CWS restart data file**: Browse and select the CWS restart data
     file. This file has the same structure as CWS input data file.
     This data file should contain the clustering data set. If only
@@ -101,7 +101,7 @@ relevant water molecules are those situated near the binding site,
 proteins, or other surfaces. While you can analyze bulk waters, they
 tend to diffuse freely. If results are produced from these waters,
 especially those classified as WCW type, exercise caution when
-interpreting the data. 
+interpreting the data.
 
 - **Water Selection Center**: Choose the method for selecting the center
   of water molecules selection. Options include:
@@ -114,7 +114,7 @@ interpreting the data.
     selected atoms will be used as the center. This selection is handled
     by MDAnalysis whose selection language is similar in most instances
     but not identical to PyMOL. For more information see `MDanalysis
-    <https://www.mdanalysis.org/docs/documentation_pages/selections.html#simple-selections>`_. 
+    <https://www.mdanalysis.org/docs/documentation_pages/selections.html#simple-selections>`_.
 
   .. tab:: **XYZ**
 
@@ -129,13 +129,13 @@ interpreting the data.
     Alternatively, the plugin offers an automatic option, which attempts
     to identify water residue names and atom names using conventions
     from widely-used MD engines and tools.
-  
+
     **Solvent Residue Name**: Specify the name of the solvent residue or
     opt for automatic detection.
-  
+
     **Water Oxygen Atom Name**: Specify the name of the water oxygen or
     opt for automatic detection.
-  
+
     **Water Hydrogen Atom Name**: Specify the name of the water hydrogen or
     opt for automatic detection.
 
@@ -146,7 +146,7 @@ inside which waters shall be selected for analysis.
   .. tab:: Buttons
 
     **Test Selection**: Click this button to test the water selection.
-    
+
     **Export CWS Input Data**: Click this button to export the CWS input data to a file.
 
 Compute results
@@ -159,13 +159,13 @@ Compute results
      Compute conserved waters and classify them into Fully, Half or
      Weakly Conserved water molecules. More information can be found in
      the `ConservedWaterSearch documentation`_.
-   
+
      - **Clustering Method**. Choose the clustering method. Options include:
-   
+
      .. tabs::
 
         .. tab:: **QMSRC**
-          
+
           Quick Multi-Stage Re-Clustering procedure.
           The best ratio of quality and speed.
 
@@ -179,10 +179,10 @@ Compute results
           Single Clustering.
           Very fast, but not very accurate. Might work well for buried
           binding sites.
-   
+
      - **Clustering Algorithm**. Choose the clustering algorithm.
        Options include:
-     
+
      .. tabs::
 
         .. tab:: **HDBSCAN**
@@ -190,44 +190,44 @@ Compute results
           Faster, but produces slightly worse clusters.
 
         .. tab:: **OPTICS**
-              
+
           Slightly slower, but produces slightly better clusters.
-   
+
      **Water Types for Clustering**: Select the types of water molecules
      for clustering. In principle users should choose ``FCW``, ``HCW`` and
      ``WCW``. In some cases it might make sense to leave ``WCW`` out. This
      will also reduce the time for the analysis by about a third. For more
      information see `ConservedWaterSearch documentation`_. ``OnlyO``
      option clusters only oxygen atoms without considering hydrogen
-     orientation data. 
-   
+     orientation data.
+
      **Clustering Options**: Depending on the chosen method, provide the
      necessary parameters. Best to leave as is. For large number of snapshots
      (>1000) it is recommended to increase the value of ``EveryMinsamp`` to
-     not more than 10% of the number of snapshots (if using QMSRC or MSRC). 
-   
+     not more than 10% of the number of snapshots (if using QMSRC or MSRC).
+
      **Compute Clustering Button**: Click this button to start the clustering
      analysis.
-   
+
      **Advanced Settings**
-   
+
      Users are discouraged to change the default values for the advanced
-     settings, except for number of threads setting under ``njobs``. 
-   
+     settings, except for number of threads setting under ``njobs``.
+
      .. note:: Number of threads: using more thread than 1 will often decrease the performance of the clustering procedure. Only use more than 1 thread if you have a very large system (thousands of frames) or a large selection of water molecules per frame.
 
    .. tab:: Water Densty Map
-      
+
       Computes oxygen density maps by binning the location of oxygen atoms to a
       3D grid. After the histogram has been computed, results are convolved with
       a gaussian whose width is defined by the oxygen van der Waals radius. Use
       the isomesh slider to adjust the isomesh value for the density map. The
       slider can also be used after the map has been computed.
-      
+
       **Grid Bin (Delta)**: Specify the bin size for the density map.
-      
+
       **Output File Name**: Specify the name of the output file for the density map.
-      
+
       **Compute Density Map Button**: Click this button to calculate the oxygen density map.
-      
+
       **Isomesh Value Slider**: Adjust the slider to change the isomesh value for the density map. It can be used after the density map was computed, and it will update the computed map.
