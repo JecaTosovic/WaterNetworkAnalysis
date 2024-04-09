@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "WaterNetworkAnalysis"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
     { name = "Domagoj Fijan" },
     { name = "Jelena Tosovic", email = "jecat_90@live.com" },
