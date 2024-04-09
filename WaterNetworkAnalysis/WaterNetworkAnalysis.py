@@ -702,6 +702,20 @@ def align_trajectory(
             topology="topology.tpr",
         )
     """
+    # check that output_trj_file name is not the same as trajectory, topology or
+    # aligntarget
+    if output_trj_file in {trajectory, topology, align_target_file_name}:
+        exception_string = (
+            "output_trj_file name cannot be the same as "
+            "trajectory, topology or align_target_file_name"
+        )
+        raise Exception(exception_string)
+    if align_target_file_name in {trajectory, topology}:
+        exception_string = (
+            "align_target_file_name name cannot be the same as "
+            "trajectory or topology"
+        )
+        raise Exception(exception_string)
     if topology is not None:
         mob = mda.Universe(topology, trajectory)
         ref: mda.Universe = mda.Universe(topology, trajectory)
@@ -739,35 +753,36 @@ def align_trajectory(
                 "topology information is needed for alignment. Consider "
                 "providing a topology file."
             )
-            raise Exception(exception_string)
-    elif not (
-        topology.upper().endswith(
-            (
-                "DATA",
-                "DMS",
-                "GSD",
-                "MMTF",
-                "MOL2",
-                "PARMED",
-                "PDB",
-                "ENT",
-                "PSF",
-                "TOP",
-                "PRMTOP",
-                "PARM7",
-                "TPR",
-                "TXYZ",
-                "ARC",
-                "XML",
-                "XPDB",
-                "PDB",
+    elif isinstance(topology, str):
+        if not (
+            topology.upper().endswith(
+                (
+                    "DATA",
+                    "DMS",
+                    "GSD",
+                    "MMTF",
+                    "MOL2",
+                    "PARMED",
+                    "PDB",
+                    "ENT",
+                    "PSF",
+                    "TOP",
+                    "PRMTOP",
+                    "PARM7",
+                    "TPR",
+                    "TXYZ",
+                    "ARC",
+                    "XML",
+                    "XPDB",
+                    "PDB",
+                )
             )
-        )
-    ):
-        exception_string: str = (
-            "unsupported topology file type. Bond information is needed for alignment."
-        )
-        raise Exception(exception_string)
+        ):
+            exception_string: str = (
+                "unsupported topology file type. Bond information is "
+                "needed for alignment."
+            )
+            raise Exception(exception_string)
     ref.select_atoms(align_selection).segments.segids = "A"
     ref.add_TopologyAttr("chainIDs")
     ref.select_atoms(align_selection).chainIDs = "A"
