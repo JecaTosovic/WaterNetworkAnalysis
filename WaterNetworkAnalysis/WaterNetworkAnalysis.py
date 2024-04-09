@@ -699,6 +699,7 @@ def align_trajectory(
     """
     # check that output_trj_file name is not the same as trajectory, topology or
     # aligntarget
+    import MDAnalysis.transformations as trans
     if (
         output_trj_file == trajectory
         or output_trj_file == topology
