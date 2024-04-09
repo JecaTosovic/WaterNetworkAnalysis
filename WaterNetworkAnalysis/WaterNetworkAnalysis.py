@@ -3,24 +3,23 @@ from __future__ import annotations
 import os
 import stat
 
-import MDAnalysis as mda
 import MDAnalysis
+import MDAnalysis as mda
+import MDAnalysis.analysis
+import MDAnalysis.analysis.align
 import MDAnalysis.core.topologyattrs
-from MDAnalysis.topology.guessers import guess_types
 import numpy as np
-from MDAnalysis.analysis.density import DensityAnalysis, Density
-from scipy.ndimage import gaussian_filter
-
 from ConservedWaterSearch.utils import (
     get_orientations_from_positions,
     read_results,
 )
+from MDAnalysis.analysis.density import Density, DensityAnalysis
+from MDAnalysis.topology.guessers import guess_types
+from scipy.ndimage import gaussian_filter
 
 
 def generate_water_selection_string():
-    """
-    Returns a selection string for selecting water molecules based on common
-    residue names used across different simulation packages.
+    """Returns a selection string for selecting water molecules.
 
     This function generates a string that can be used in MDAnalysis's
     select_atoms method to select water molecules from a molecular dynamics
@@ -57,9 +56,7 @@ def generate_water_selection_string():
     ]
 
     # Creating the selection string
-    selection_string = " or ".join(f"resname {resname}" for resname in water_resnames)
-
-    return selection_string
+    return " or ".join(f"resname {resname}" for resname in water_resnames)
 
 
 def get_selection_string_from_resnums(
@@ -96,7 +93,7 @@ def get_selection_string_from_resnums(
             selection += str(i) + ","
         if selection_type == "NGLVIEW":
             selection += str(i) + " or "
-    if selection_type == "MDA" or selection_type == "NGLVIEW":
+    if selection_type in ("MDA", "NGLVIEW"):
         selection = selection[: len(selection) - 3]
     if selection_type == "PYMOL":
         selection = selection[: len(selection) - 1]
@@ -153,8 +150,8 @@ def calculate_oxygen_density_map(
     dist: float = 12.0,
     delta: float = 0.4,
     every: int = 1,
-    SOL: str = None,
-    OW: str = None,
+    SOL: str | None = None,
+    OW: str | None = None,
     output_name: str = "water.dx",
 ) -> Density:
     """Generate oxygen density maps.
@@ -215,7 +212,11 @@ def calculate_oxygen_density_map(
     else:
         oxygen_selection = "name " + OW
     ss: mda.AtomGroup = u.select_atoms(
-        f"{oxygen_selection} and {water_selection} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
+        (
+            f"{oxygen_selection} and {water_selection} and point "
+            f"{selection_center[0]} {selection_center[1]} {selection_center[2]} "
+            f"{dist}"
+        ),
         updating=True,
     )
     D: DensityAnalysis = DensityAnalysis(
@@ -303,11 +304,10 @@ def make_results_pdb_MDA(
         )
     """
     rescntr: int = 2
-    # if protein file is not align_file then align the structure to the align file first??
     if protein_file is not None:
         us: mda.Universe = mda.Universe(protein_file)
         protein: mda.AtomGroup = us.select_atoms("protein")
-        # here if ligand conformations have not been calculated perhaps try calculating them if possible?
+        # TODO for multiple confs
         ligand: list = []
         if ligand_name:
             ligand.append(us.select_atoms("resname " + str(ligand_name)))
@@ -389,9 +389,9 @@ def extract_waters_from_trajectory(
     topology: str | None = None,
     dist: float = 12.0,
     every: int = 1,
-    SOL: str = None,
-    OW: str = None,
-    HW: str = None,
+    SOL: str | None = None,
+    OW: str | None = None,
+    HW: str | None = None,
     extract_only_O: bool = False,
     save_file: str | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -470,7 +470,11 @@ def extract_waters_from_trajectory(
     # loop over
     for _ in u.trajectory[::every]:
         oxygens = u.select_atoms(
-            f"{oxygen_selection} and {water_selection} and point {selection_center[0]} {selection_center[1]} {selection_center[2]} {dist}",
+            (
+                f"{oxygen_selection} and {water_selection} and point "
+                f"{selection_center[0]} {selection_center[1]} {selection_center[2]}"
+                f" {dist}"
+            ),
         )
         for oxygen in oxygens:
             coordsO.append(oxygen.position)
@@ -479,9 +483,11 @@ def extract_waters_from_trajectory(
                     f"resid {oxygen.resid} and ({hydrogen_selection})"
                 )
                 if len(hydrogens) != 2:
-                    raise Exception(
-                        f"Water {oxygen.resid} has too many hydrogens ({len(hydrogens)})."
+                    exception_string: str = (
+                        f"Water {oxygen.resid} has too many"
+                        f" hydrogens ({len(hydrogens)})."
                     )
+                    raise Exception(exception_string)
                 for hydrogen_positions in hydrogens.positions:
                     coordsH.append(hydrogen_positions)
     Odata: np.ndarray = np.asarray(coordsO)
@@ -492,10 +498,9 @@ def extract_waters_from_trajectory(
         if save_file is not None:
             np.savetxt(save_file, np.c_[Opos, H1, H2])
         return Odata, coordsH
-    else:
-        if save_file is not None:
-            np.savetxt(save_file, Odata)
-        return Odata
+    if save_file is not None:
+        np.savetxt(save_file, Odata)
+    return Odata
 
 
 def __align_mda(
@@ -697,8 +702,6 @@ def align_trajectory(
             topology="topology.tpr",
         )
     """
-    import MDAnalysis.transformations as trans
-
     if topology is not None:
         mob = mda.Universe(topology, trajectory)
         ref: mda.Universe = mda.Universe(topology, trajectory)
@@ -731,9 +734,12 @@ def align_trajectory(
                 )
             )
         ):
-            raise Exception(
-                "unsupported trajectory file format. bond topology information is needed for alignment. Consider providing a topology file."
+            exception_string: str = (
+                "unsupported trajectory file format. bond "
+                "topology information is needed for alignment. Consider "
+                "providing a topology file."
             )
+            raise Exception(exception_string)
     elif not (
         topology.upper().endswith(
             (
@@ -758,9 +764,10 @@ def align_trajectory(
             )
         )
     ):
-        raise Exception(
+        exception_string: str = (
             "unsupported topology file type. Bond information is needed for alignment."
         )
+        raise Exception(exception_string)
     ref.select_atoms(align_selection).segments.segids = "A"
     ref.add_TopologyAttr("chainIDs")
     ref.select_atoms(align_selection).chainIDs = "A"
@@ -774,12 +781,13 @@ def align_trajectory(
             + trajectory[trajectory.rfind(".") :]
         )
         with mda.Writer(unaligned_trj_file, multiframe=True) as W:
-            for i in mob.trajectory[::every]:
+            for _ in mob.trajectory[::every]:
                 W.write(mob.atoms)
     elif every == 1:
         unaligned_trj_file: str = trajectory
     else:
-        raise Exception("every must be a positive integer")
+        exception_string: str = "every must be a positive integer"
+        raise Exception(exception_string)
     if align_mode == "probis":
         __align_probis(
             unaligned_trj_file=unaligned_trj_file,
@@ -798,7 +806,8 @@ def align_trajectory(
             align_selection=align_selection,
         )
     else:
-        raise Exception("wrong alignemnt mode, must be probis or mda")
+        exception_string: str = "wrong alignemnt mode, must be probis or mda"
+        raise Exception(exception_string)
 
 
 def align_and_extract_waters(
@@ -815,8 +824,7 @@ def align_and_extract_waters(
     dist: float = 12.0,
     SOL: str = "SOL",
     OW: str = "OW",
-    HW1: str = "HW1",
-    HW2: str = "HW2",
+    HW: str = "HW",
 ) -> tuple[np.ndarray]:
     """Align and extracts waters from trajectory.
 
@@ -859,8 +867,8 @@ def align_and_extract_waters(
             ``center_for_water_selection`` to be used for extraction of
             water molecules. Defaults to 12.0.
         SOL (str, optional): Residue name for waters. Defaults to "SOL".
-        save_file (str | None, optional): File to which coordinates
-            will be saved. If none doesn't save to a file. Defaults to None.
+        OW (str, optional): Name of the oxygen atom. Defaults to "OW".
+        HW (str, optional): Name of the hydrogen atom. Defaults to "HW".
 
     Returns:
         tuple[np.ndarray, np.ndarray]:
@@ -903,6 +911,8 @@ def align_and_extract_waters(
         dist=dist,
         topology=topology,
         SOL=SOL,
+        OW=OW,
+        HW=HW,
     )
 
 

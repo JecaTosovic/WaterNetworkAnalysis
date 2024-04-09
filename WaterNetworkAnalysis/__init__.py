@@ -1,5 +1,4 @@
-"""
-WaterNetworkAnalysis
+"""WaterNetworkAnalysis
 Module for preparation of raw trajectories for analysis of conserved waters for ConservedWaterSearch
 """
 
@@ -8,9 +7,9 @@ from .WaterNetworkAnalysis import (
     align_trajectory,
     calculate_oxygen_density_map,
     extract_waters_from_trajectory,
+    generate_water_selection_string,
     get_center_of_selection,
     get_selection_string_from_resnums,
     make_results_pdb_MDA,
     read_results_and_make_pdb,
-    generate_water_selection_string,
 )
