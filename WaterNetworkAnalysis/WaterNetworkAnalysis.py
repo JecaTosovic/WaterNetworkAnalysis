@@ -616,9 +616,9 @@ def __align_probis(
     unaligned_trj_file: str,
     pdb_to_align_to: str,
     output_trj_file: str,
+    probis_exec: str,
     topology: str | None = None,
     align_selection: str = "protein",
-    probis_exec: str | None = None,
 ) -> None:
     """Alignment function that uses probis.
 
@@ -632,24 +632,21 @@ def __align_probis(
         pdb_to_align_to (str): pdb file that containes the reference
             state to align to.
         output_trj_file (str): output file trajectory will be saved to.
+        probis_exec (str | None, optional): Executable to run probis
+            algorithm.
         topology (str | None, optional): File containing topology.
             Defaults to None.
         align_selection (str, optional): selection to align to. Defaults
             to "protein".
-        probis_exec (str | None, optional): Executable to run probis
-            algorithm. If None it is downloaded from the internet.
-            Defaults to None.
     """
-    import wget
-
     if probis_exec is None:
-        pwd: str = os.path.abspath(os.getcwd())
-        probis_web: str = "http://insilab.org/files/probis-algorithm/probis"
-        if not (os.path.isfile(pwd + "/probis")):
-            wget.download(probis_web, pwd + "/probis")
-        probis_exec = "probis"
-        st: os.stat_result = os.stat(probis_exec)
-        os.chmod(probis_exec, st.st_mode | stat.S_IEXEC)
+        msg = (
+            "probis_exec must be provided or probis must be installed in the "
+            "current working directory."
+        )
+        raise Exception(msg)
+    st: os.stat_result = os.stat(probis_exec)
+    os.chmod(probis_exec, st.st_mode | stat.S_IEXEC)
     if align_selection == "protein":
         sele: str = ""
     else:
@@ -765,8 +762,8 @@ def align_trajectory(
         align_selection (str, optional): Selection to align to. Defaults
             to "protein".
         probis_exec (str | None, optional): location of probis
-            executable if probis is used. If ``None`` it is downloaded from the
-            internet. Defaults to ``None``.
+            executable if probis is used. Must be provided if ``align_mode`` is
+            "probis".
 
     Example::
 
@@ -885,9 +882,9 @@ def align_trajectory(
             unaligned_trj_file=unaligned_trj_file,
             pdb_to_align_to=align_target_file_name,
             output_trj_file=output_trj_file,
+            probis_exec=probis_exec,
             topology=topology,
             align_selection=align_selection,
-            probis_exec=probis_exec,
         )
     elif align_mode == "mda":
         __align_mda(
