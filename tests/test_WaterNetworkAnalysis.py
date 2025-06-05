@@ -5,6 +5,7 @@ import os
 
 import MDAnalysis as mda
 import numpy as np
+import pytest
 import numpy.testing as npt
 
 from WaterNetworkAnalysis import (
@@ -51,7 +52,7 @@ def test_make_results_pdb_MDA():
 
 
 def test_get_center_of_selection():
-    u = mda.fetch_mmtf("3t74")
+    u = mda.Universe("tests/data/3t74.pdb")
     u.select_atoms("protein").write("test.pdb")
     sel = u.select_atoms("resid 123")
     cc = get_center_of_selection(get_selection_string_from_resnums([123]), "test.pdb")
@@ -140,6 +141,7 @@ def test_align_mda_every():
     os.remove("align.pdb")
 
 
+@pytest.mark.xfail(reason="ProBiS alignment requires ProBiS installation")
 def test_align_probis():
     align_trajectory(
         trajectory="tests/data/testtrjgromacs.xtc",
