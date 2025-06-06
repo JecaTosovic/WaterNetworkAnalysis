@@ -64,7 +64,7 @@ def test_calculate_oxygen_density_map():
     trjfname = "tests/data/testtrjgromacs.xtc"
     topfname = "tests/data/testtopgromacs.tpr"
     calculate_oxygen_density_map(
-        get_center_of_selection("resname UBX", trjfname, topfname),
+        "resname UBX",
         trjfname,
         topfname,
     )
@@ -77,31 +77,27 @@ def test_extract_waters_from_trajectory():
     altrj = "tests/data/testalignedtrj.xtc"
     topof = "tests/data/testtopgromacs.tpr"
     extract_waters_from_trajectory(
-        get_center_of_selection(
-            get_selection_string_from_resnums(
-                [
-                    111,
-                    112,
-                    113,
-                    122,
-                    133,
-                    138,
-                    139,
-                    142,
-                    143,
-                    157,
-                    166,
-                    167,
-                    169,
-                    170,
-                    203,
-                    231,
-                    232,
-                    238,
-                ]
-            ),
-            altrj,
-            topof,
+        get_selection_string_from_resnums(
+            [
+                111,
+                112,
+                113,
+                122,
+                133,
+                138,
+                139,
+                142,
+                143,
+                157,
+                166,
+                167,
+                169,
+                170,
+                203,
+                231,
+                232,
+                238,
+            ]
         ),
         altrj,
         topof,
@@ -113,10 +109,7 @@ def test_extract_waters_from_trajectory():
 def test_extract_waters_from_trajectory_pdb_uneq_num_of_atoms():
     altrj = "tests/data/test_noneq_atom_num.pdb"
     extract_waters_from_trajectory(
-        get_center_of_selection(
-            "resname UBX",
-            altrj,
-        ),
+        "resname UBX",
         altrj,
     )
 
@@ -173,13 +166,13 @@ def test_density_map_units():
     trjfname = "tests/data/testalignedtrj.xtc"
     topfname = "tests/data/testtopgromacs.tpr"
     densgro = calculate_oxygen_density_map(
-        get_center_of_selection("resname UBX", trjfname, topfname),
+        "resname UBX",
         trjfname,
         topfname,
     )
     trjpdbname = "tests/data/testalignedtrj.pdb"
     denspdb = calculate_oxygen_density_map(
-        get_center_of_selection("resname UBX", trjpdbname),
+        "resname UBX",
         trjpdbname,
     )
     npt.assert_allclose(densgro.grid, denspdb.grid, atol=1e-3, rtol=1e-3)
