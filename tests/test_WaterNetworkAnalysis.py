@@ -5,8 +5,8 @@ import os
 
 import MDAnalysis as mda
 import numpy as np
-import pytest
 import numpy.testing as npt
+import pytest
 
 from WaterNetworkAnalysis import (
     align_trajectory,
@@ -112,6 +112,29 @@ def test_extract_waters_from_trajectory_pdb_uneq_num_of_atoms():
         "resname UBX",
         altrj,
     )
+
+
+def test_extract_waters_modes_different():
+    altrj = "tests/data/test_noneq_atom_num.pdb"
+    m1 = extract_waters_from_trajectory("resname UBX", altrj, mode="cog")
+    m2 = extract_waters_from_trajectory("resname UBX", altrj, mode="atomwise", dist=6)
+    # assert number of waters is the different
+    assert len(m1[0]) != len(m2[0])
+
+
+def test_extract_waters_modes_same():
+    altrj = "tests/data/test_noneq_atom_num.pdb"
+    # now for selection string use a single atom! these should now be the same
+    m1 = extract_waters_from_trajectory(
+        "resname UBX and name C1", altrj, mode="cog", dist=6
+    )
+    m2 = extract_waters_from_trajectory(
+        "resname UBX and name C1",
+        altrj,
+        mode="atomwise",
+        dist=6,
+    )
+    assert len(m1[0]) == len(m2[0])
 
 
 def test_align_mda():
