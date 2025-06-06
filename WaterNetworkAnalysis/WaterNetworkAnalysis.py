@@ -455,7 +455,10 @@ def extract_waters_from_trajectory(
         )
     """
     if topology:
-        u = mda.Universe(topology, trajectory)
+        if isinstance(trajectory, str):
+            u = mda.Universe(topology, trajectory)
+        else:
+            u = mda.Universe(topology)
     else:
         u = mda.Universe(trajectory)
     if SOL is None:
@@ -493,16 +496,42 @@ def extract_waters_from_trajectory(
         coordsH = []
     coordsO = []
     mismatch_detected = False
-    if is_pdb_file(trajectory):
-        # Detect if any frame has a different number of atoms
-        expected_n_atoms = len(u.atoms)
-        try:
-            for ts in u.trajectory:
-                if ts.n_atoms != expected_n_atoms:
-                    mismatch_detected = True
-                    break
-        except ValueError:
-            mismatch_detected = True
+    multipdb = False
+    if isinstance(trajectory, str):
+        if is_pdb_file(trajectory):
+            # Detect if any frame has a different number of atoms
+            expected_n_atoms = len(u.atoms)
+            try:
+                for ts in u.trajectory:
+                    if ts.n_atoms != expected_n_atoms:
+                        mismatch_detected = True
+                        break
+            except ValueError:
+                mismatch_detected = True
+    else:
+        multipdb = True
+
+    def _extract_water_atoms(u):
+        """Extract water atoms from the universe."""
+        oxygens = u.select_atoms(oxygen_selection_string)
+        for oxygen in oxygens:
+            coordsO.append(oxygen.position.copy())
+            if not extract_only_O:
+                hydrogens = u.select_atoms(
+                    f"resid {oxygen.resid} and "
+                    f"({hydrogen_selection}) and "
+                    f"({water_selection})"
+                )
+                if len(hydrogens) != 2:
+                    msg = (
+                        f"Water {oxygen.resid} has too many hydrogens "
+                        f"({len(hydrogens)}) in frame {u.trajectory.frame}. "
+                        "Check the trajectory for consistency."
+                    )
+                    raise Exception(msg)
+                for hpos in hydrogens.positions:
+                    coordsH.append(hpos.copy())
+
     if mismatch_detected:
         model_counter = 0
         inside_model = False
@@ -531,24 +560,25 @@ def extract_waters_from_trajectory(
 
                     # Load and process that single frame PDB
                     u_frame = mda.Universe(frame_name)
-                    oxygens = u_frame.select_atoms(oxygen_selection_string)
-                    for oxygen in oxygens:
-                        coordsO.append(oxygen.position.copy())
-                        if not extract_only_O:
-                            hydrogens = u_frame.select_atoms(
-                                f"resid {oxygen.resid} and "
-                                f"({hydrogen_selection}) and "
-                                f"({water_selection})"
-                            )
-                            if len(hydrogens) != 2:
-                                msg = (
-                                    f"Water {oxygen.resid} has too many hydrogens "
-                                    f"({len(hydrogens)}) in frame {model_counter}."
-                                )
-                                os.remove(frame_name)
-                                raise Exception(msg)
-                            for hpos in hydrogens.positions:
-                                coordsH.append(hpos.copy())
+                    _extract_water_atoms(u_frame)
+                    #oxygens = u_frame.select_atoms(oxygen_selection_string)
+                    #for oxygen in oxygens:
+                    #    coordsO.append(oxygen.position.copy())
+                    #    if not extract_only_O:
+                    #        hydrogens = u_frame.select_atoms(
+                    #            f"resid {oxygen.resid} and "
+                    #            f"({hydrogen_selection}) and "
+                    #            f"({water_selection})"
+                    #        )
+                    #        if len(hydrogens) != 2:
+                    #            msg = (
+                    #                f"Water {oxygen.resid} has too many hydrogens "
+                    #                f"({len(hydrogens)}) in frame {model_counter}."
+                    #            )
+                    #            os.remove(frame_name)
+                    #            raise Exception(msg)
+                    #        for hpos in hydrogens.positions:
+                    #            coordsH.append(hpos.copy())
 
                     # Delete the temp file before reading the next model
                     os.remove(frame_name)
@@ -561,27 +591,48 @@ def extract_waters_from_trajectory(
                 # If we are inside a MODEL…ENDMDL block, keep adding lines
                 if inside_model:
                     buffer_lines.append(line)
-
+    elif multipdb:
+        for fname in trajectory:
+            u = mda.Universe(fname)
+            _extract_water_atoms(u)
+            #oxygens = u.select_atoms(oxygen_selection_string)
+            #for oxygen in oxygens:
+            #    coordsO.append(oxygen.position.copy())
+            #    if extract_only_O is False:
+            #        hydrogens = u.select_atoms(
+            #            f"resid {oxygen.resid} and "
+            #            f"({hydrogen_selection}) and "
+            #            f"({water_selection})"
+            #        )
+            #        if len(hydrogens) != 2:
+            #            exception_string: str = (
+            #                f"Water {oxygen.resid} has too many"
+            #                f" hydrogens ({len(hydrogens)})."
+            #            )
+            #            raise Exception(exception_string)
+            #        for hydrogen_positions in hydrogens.positions:
+            #            coordsH.append(hydrogen_positions.copy())
     else:
         # loop over
         for _ in u.trajectory[::every]:
-            oxygens = u.select_atoms(oxygen_selection_string)
-            for oxygen in oxygens:
-                coordsO.append(oxygen.position)
-                if extract_only_O is False:
-                    hydrogens = u.select_atoms(
-                        f"resid {oxygen.resid} and "
-                        f"({hydrogen_selection}) and "
-                        f"({water_selection})"
-                    )
-                    if len(hydrogens) != 2:
-                        exception_string: str = (
-                            f"Water {oxygen.resid} has too many"
-                            f" hydrogens ({len(hydrogens)})."
-                        )
-                        raise Exception(exception_string)
-                    for hydrogen_positions in hydrogens.positions:
-                        coordsH.append(hydrogen_positions)
+            _extract_water_atoms(u)
+            #oxygens = u.select_atoms(oxygen_selection_string)
+            #for oxygen in oxygens:
+            #    coordsO.append(oxygen.position)
+            #    if extract_only_O is False:
+            #        hydrogens = u.select_atoms(
+            #            f"resid {oxygen.resid} and "
+            #            f"({hydrogen_selection}) and "
+            #            f"({water_selection})"
+            #        )
+            #        if len(hydrogens) != 2:
+            #            exception_string: str = (
+            #                f"Water {oxygen.resid} has too many"
+            #                f" hydrogens ({len(hydrogens)})."
+            #            )
+            #            raise Exception(exception_string)
+            #        for hydrogen_positions in hydrogens.positions:
+            #            coordsH.append(hydrogen_positions)
     Odata: np.ndarray = np.asarray(coordsO)
     if extract_only_O is False:
         coordsH = np.asarray(coordsH)
