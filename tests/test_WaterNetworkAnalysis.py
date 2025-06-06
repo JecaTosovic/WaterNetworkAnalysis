@@ -137,6 +137,19 @@ def test_extract_waters_modes_same():
     assert len(m1[0]) == len(m2[0])
 
 
+def test_multifile_pdb_reader():
+    import glob
+    trajectory = sorted(glob.glob("tests/data/multi_test_noneq_atom_num_*.pdb"))
+    topology = "tests/data/multi_test_noneq_atom_num_0.pdb"
+    extract_waters_from_trajectory(
+        "resname UBX",
+        trajectory,
+        topology=topology,
+        mode="cog",
+        dist = 4,
+    )
+
+
 def test_align_mda():
     align_trajectory(
         trajectory="tests/data/testtrjgromacs.xtc",
