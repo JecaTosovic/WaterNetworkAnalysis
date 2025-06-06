@@ -144,7 +144,7 @@ def get_center_of_selection(
 
 
 def calculate_oxygen_density_map(
-    selection_center: np.ndarray,
+    selection: str,
     trajectory: str,
     topology: str | None = None,
     dist: float = 12.0,
@@ -153,14 +153,15 @@ def calculate_oxygen_density_map(
     SOL: str | None = None,
     OW: str | None = None,
     output_name: str = "water.dx",
+    mode: str = "cog",
 ) -> Density:
     """Generate oxygen density maps.
 
     Generate oxygen density maps using MDAnalysis.
 
     Args:
-        selection_center (np.ndarray): center of selection
-            around which waters will be selected.
+        selection (str): Selection string for MDAnalysis. This is the part of your
+            system around which you want to extract water molecules.
         trajectory (str): trajectory filename.
         topology (str | None, optional): Topology filename if available.
             Defaults to None.
@@ -177,6 +178,11 @@ def calculate_oxygen_density_map(
             be determined automatically. Defaults to None.
         output_name (str, optional): name of the output file, it should
             end with '.dx' . Defaults to "water.dx".
+        mode (str, optional): Mode of selection. Options are "cog" and "atomwise".
+            Defaults to "cog". "cog" creates a center of mass of the given selection,
+            and collects all the waters within this center of mass cutoff. "atomwise"
+            selects water molecules which are within the given distance cutoff away from
+            any atom in the selection.
 
     Returns:
         Density:
@@ -211,18 +217,20 @@ def calculate_oxygen_density_map(
             u.add_TopologyAttr("elements", guess_types(u.atoms.names))
     else:
         oxygen_selection = "name " + OW
-    ss: mda.AtomGroup = u.select_atoms(
-        (
-            f"{oxygen_selection} and {water_selection} and point "
-            f"{selection_center[0]} {selection_center[1]} {selection_center[2]} "
-            f"{dist}"
-        ),
-        updating=True,
-    )
+    if mode == "cog":
+        selection_string = (
+            f"{oxygen_selection} and {water_selection} and sphzone {dist} "
+            f"({selection})"
+        )
+    elif mode == "atomwise":
+        selection_string = (
+            f"{oxygen_selection} and {water_selection} and around {dist} ({selection})"
+        )
+    ss: mda.AtomGroup = u.select_atoms( selection_string, updating=True)
     D: DensityAnalysis = DensityAnalysis(
         ss,
         delta=delta,
-        gridcenter=selection_center,
+        gridcenter=get_center_of_selection(selection, trajectory, topology),
         xdim=dist * 2,
         ydim=dist * 2,
         zdim=dist * 2,
@@ -384,7 +392,7 @@ def make_results_pdb_MDA(
 
 
 def extract_waters_from_trajectory(
-    selection_center: np.ndarray,
+    selection: str,
     trajectory: str,
     topology: str | None = None,
     dist: float = 12.0,
@@ -394,6 +402,7 @@ def extract_waters_from_trajectory(
     HW: str | None = None,
     extract_only_O: bool = False,
     save_file: str | None = None,
+    mode: str = "cog",
 ) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
     """Extract waters for clustering analysis.
 
@@ -402,8 +411,8 @@ def extract_waters_from_trajectory(
     clustering. The trajectory should be aligned previously.
 
     Args:
-        selection_center (np.ndarray): coordinates of selection
-            center around which waters will be selected.
+        selection (str): Selection string for MDAnalysis. This is the part of your
+            system around which you want to extract water molecules.
         trajectory (str): Trajectory file name.
         topology (str | None, optional): Topology file name. Defaults to None.
         dist (float, optional): Distance around the center of selection
@@ -423,6 +432,11 @@ def extract_waters_from_trajectory(
             positions. Defaults to False.
         save_file (str | None, optional): File to which coordinates will
             be saved. If none doesn't save to a file. Defaults to None.
+        mode (str, optional): Mode of selection. Options are "cog" and "atomwise".
+            Defaults to "cog". "cog" creates a center of mass of the given selection,
+            and collects all the waters within this center of mass cutoff. "atomwise"
+            selects water molecules which are within the given distance cutoff away from
+            any atom in the selection.
 
     Returns:
         np.ndarray or tuple[np.ndarray, np.ndarray]:
@@ -452,6 +466,17 @@ def extract_waters_from_trajectory(
         oxygen_selection = "element O"
     else:
         oxygen_selection = "name " + OW
+    if mode == "cog":
+        oxygen_selection_string = (
+            f"{oxygen_selection} and {water_selection} and sphzone {dist} {selection}"
+        )
+    elif mode == "atomwise":
+        oxygen_selection_string = (
+            f"{oxygen_selection} and {water_selection} and around {dist} {selection}"
+        )
+    else:
+        msg = f"Mode {mode} is not supported. Use 'cog' or 'atomwise'."
+        raise ValueError(msg)
     if HW is None:
         hydrogen_selection = "element H"
     else:
@@ -506,11 +531,7 @@ def extract_waters_from_trajectory(
 
                     # Load and process that single frame PDB
                     u_frame = mda.Universe(frame_name)
-                    oxygens = u_frame.select_atoms(
-                        f"{oxygen_selection} and {water_selection} and point "
-                        f"{selection_center[0]} {selection_center[1]} "
-                        f"{selection_center[2]} {dist}"
-                    )
+                    oxygens = u_frame.select_atoms(oxygen_selection_string)
                     for oxygen in oxygens:
                         coordsO.append(oxygen.position.copy())
                         if not extract_only_O:
@@ -544,13 +565,7 @@ def extract_waters_from_trajectory(
     else:
         # loop over
         for _ in u.trajectory[::every]:
-            oxygens = u.select_atoms(
-                (
-                    f"{oxygen_selection} and {water_selection} and point "
-                    f"{selection_center[0]} {selection_center[1]} {selection_center[2]}"
-                    f" {dist}"
-                ),
-            )
+            oxygens = u.select_atoms(oxygen_selection_string)
             for oxygen in oxygens:
                 coordsO.append(oxygen.position)
                 if extract_only_O is False:
@@ -900,7 +915,7 @@ def align_trajectory(
 
 
 def align_and_extract_waters(
-    center_for_water_selection: np.ndarray,
+    selection: str,
     trajectory: str,
     aligned_trajectory_filename: str,
     align_target_file_name: str,
@@ -914,6 +929,7 @@ def align_and_extract_waters(
     SOL: str = "SOL",
     OW: str = "OW",
     HW: str = "HW",
+    selection_mode: str = "cog",
 ) -> tuple[np.ndarray]:
     """Align and extracts waters from trajectory.
 
@@ -923,9 +939,8 @@ def align_and_extract_waters(
     extract the water molecules for water clustering analysis.
 
     Args:
-        center_for_water_selection (np.ndarray): Coordiantes
-            around which all water molecules inside a radius ``dist``
-            will be seleceted for water clustering analysis.
+        selection (str): Selection string for MDAnalysis. This is the
+            part of your system for which you want to extract water molecules.
         trajectory (str): File name of the trajectory from which waters
             will be extracted.
         aligned_trajectory_filename (str): File name to which aligned
@@ -958,6 +973,12 @@ def align_and_extract_waters(
         SOL (str, optional): Residue name for waters. Defaults to "SOL".
         OW (str, optional): Name of the oxygen atom. Defaults to "OW".
         HW (str, optional): Name of the hydrogen atom. Defaults to "HW".
+        selection_mode (str, optional): Mode of selection. Options
+            are "cog" and "atomwise". Defaults to "cog". "cog" creates a
+            center of mass of the given selection, and collects all the
+            waters within this center of mass cutoff. "atomwise" selects
+            water molecules which are within the given distance cutoff away from
+            any atom in the selection.
 
     Returns:
         tuple[np.ndarray, np.ndarray]:
@@ -995,13 +1016,14 @@ def align_and_extract_waters(
         probis_exec=probis_exec,
     )
     return extract_waters_from_trajectory(
-        center_for_water_selection,
+        selection=selection,
         trajectory=aligned_trajectory_filename,
         dist=dist,
         topology=topology,
         SOL=SOL,
         OW=OW,
         HW=HW,
+        mode=selection_mode
     )
 
 
@@ -1067,9 +1089,9 @@ def read_results_and_make_pdb(
 
 
 def is_pdb_file(filepath: str) -> bool:
-    """
-    Return True if `filepath` is probably a PDB (by extension or by peeking at contents).
-    If it’s binary (like XTC/DCD), this will return False safely.
+    """Return True if `filepath` is probably a PDB.
+
+    If it's binary (like XTC/DCD), this will return False safely.
     """
     ext = os.path.splitext(filepath)[1].lower()
     if ext in {".pdb", ".ent", ".pdb1", ".pdb2"}:
@@ -1077,13 +1099,13 @@ def is_pdb_file(filepath: str) -> bool:
 
     # If extension isn't a known PDB, peek at first few lines:
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             for _ in range(10):
                 line = next(f)
                 if line.startswith(("ATOM  ", "HETATM", "HEADER", "TITLE")):
                     return True
-    except (UnicodeDecodeError, IOError, StopIteration):
-        # If it fails to decode (binary), or can't open, it’s not a PDB.
+    except (OSError, UnicodeDecodeError, StopIteration):
+        # If it fails to decode (binary), or can't open, it's not a PDB.
         return False
 
     return False
