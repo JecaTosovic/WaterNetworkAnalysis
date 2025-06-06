@@ -8,7 +8,7 @@ To compute conserved waters from MD trajectories one has to first align the whol
 
 .. code:: python
 
-   from WaterNetworkAnalysis import align_trajectory, get_center_of_selection,get_selection_string_from_resnums,extract_waters_from_trajectory
+   from WaterNetworkAnalysis import align_trajectory,get_selection_string_from_resnums,extract_waters_from_trajectory
    from ConservedWaterSearch.water_clustering import WaterClustering
    from ConservedWaterSearch.utils import get_orientations_from_positions
 
@@ -29,19 +29,13 @@ To compute conserved waters from MD trajectories one has to first align the whol
        align_target_file_name=aligned_snap,
        output_trj_file=alignedtrj,
    )
-   # define active site by aminoacid residue numbers
-   active_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
-   # find centre of the active site in aligned trajectory
-   selection_centre = get_center_of_selection(
-       get_selection_string_from_resnums(active_site_resnums),
-       trajectory=alignedtrj,
-       topology=topology,
-   )
+   # define binding site by aminoacid residue numbers
+   binding_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
    # extract water coordinates of interest around selection centre
    coordO, coordH =  extract_waters_from_trajectory(
+       get_selection_string_from_resnums(binding_site_resnums),
        trajectory=alignedtrj,
        topology=topology,
-       selection_center=selection_centre,
        dist=distance
    )
    # start the clustering procedure
@@ -52,7 +46,7 @@ To compute conserved waters from MD trajectories one has to first align the whol
    # visualise results with pymol
    WC.visualise_pymol(
        aligned_snap,
-       active_site_ids=active_site_resnums,
+       active_site_ids=binding_site_resnums,
        dist=distance
    )
    # manually save the results for later use
@@ -114,17 +108,11 @@ For convenience one can perform alignment and extraction of water molecules in a
    aligned_snap = "aligned.pdb"
    # distance to select water molecules around
    distance = 12.0
-   # define active site by aminoacid residue numbers
-   active_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
-   # find centre of the active site in aligned trajectory
-   selection_centre = get_center_of_selection(
-       get_selection_string_from_resnums(active_site_resnums),
-       trajectory=alignedtrj,
-       topology=topology,
-   )
+   # define binding site by aminoacid residue numbers
+   binding_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
    # align the trajectory, save the alignment reference configuration and extract relevent waters
    coordO, coordH = align_and_extract_waters(
-       selection_centre,
+       get_selection_string_from_resnums(binding_site_resnums),
        trajectory,
        alignedtrj,
        aligned_snap,
@@ -155,16 +143,10 @@ WNA supports calculation of oxygen density maps using `MDAnalysis <https://www.m
    distance = 12.0
    # name of water density map file
    watdens_fname = 'water.dx'
-   # define active site by aminoacid residue numbers
-   active_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
-   # find centre of the active site in aligned trajectory
-   selection_centre = get_center_of_selection(
-       get_selection_string_from_resnums(active_site_resnums),
-       trajectory=alignedtrj,
-       topology=topology,
-   )
+   # define binding site by aminoacid residue numbers
+   binding_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
    calculate_oxygen_density_map(
-       selection_center=selection_centre,
+       get_selection_string_from_resnums(binding_site_resnums),
        trajectory=alignedtrj,
        topology=topology,
        dist=distance,
@@ -177,7 +159,7 @@ The density map can be visualised together with the conserved water clustering r
 
    WC.visualise_pymol(
        aligned_snap,
-       active_site_ids=active_site_resnums,
+       active_site_ids=binding_site_resnums,
        dist=distance,
        density_map=watdens_fname
    )

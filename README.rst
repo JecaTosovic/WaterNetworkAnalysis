@@ -76,7 +76,6 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
 .. code:: python
 
    from WaterNetworkAnalysis import align_trajectory
-   from WaterNetworkAnalysis import get_center_of_selection
    from WaterNetworkAnalysis import get_selection_string_from_resnums
    from WaterNetworkAnalysis import extract_waters_from_trajectory
    from ConservedWaterSearch.water_clustering import WaterClustering
@@ -99,19 +98,13 @@ The following example shows how to use **WaterNetworkAnalysis** to prepare a MD 
        align_target_file_name=aligned_snap,
        output_trj_file=alignedtrj,
    )
-   # define active site by aminoacid residue numbers
-   active_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
-   # find centre of the active site in aligned trajectory
-   selection_centre = get_center_of_selection(
-       get_selection_string_from_resnums(active_site_resnums),
-       trajectory=alignedtrj,
-       topology=topology,
-   )
+   # define binding site by aminoacid residue numbers
+   binding_site_resnums = [111, 112, 113, 122, 133, 138, 139, 142, 143, 157, 166, 167, 169, 170, 203, 231, 232, 238]
    # extract water coordinates of interest around selection centre
    coordO, coordH =  extract_waters_from_trajectory(
+       get_selection_string_from_resnums(binding_site_resnums),
        trajectory=alignedtrj,
        topology=topology,
-       selection_center=selection_centre,
        dist=distance
    )
    # start the clustering procedure
