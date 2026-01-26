@@ -110,6 +110,17 @@ def test_extract_waters_from_trajectory():
     # os.remove("tests/data/testalignedtrj.xtc_offsets.lock")
 
 
+def test_extract_waters_from_trajectory_pdb_uneq_num_of_atoms():
+    altrj = "tests/data/test_noneq_atom_num.pdb"
+    extract_waters_from_trajectory(
+        get_center_of_selection(
+            "resname UBX",
+            altrj,
+        ),
+        altrj,
+    )
+
+
 def test_align_mda():
     align_trajectory(
         trajectory="tests/data/testtrjgromacs.xtc",
