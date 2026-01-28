@@ -33,7 +33,7 @@ def test_make_results_pdb_MDA():
         Opos = coords[:, :3]
         H1 = coords[:, 3:6]
         H2 = coords[:, 6:9]
-        for i, j, k in zip(Opos, H1, H2):
+        for i, j, k in zip(Opos, H1, H2, strict=False):
             waterO.append(i)
             waterH1.append(j)
             waterH2.append(k)

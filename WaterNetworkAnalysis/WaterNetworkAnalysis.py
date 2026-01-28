@@ -335,7 +335,7 @@ def make_results_pdb_MDA(
     coordinates: list[list[float]] = []
     rns: list[str] = []
     resid: list[int] = []
-    looper = zip(waterO, waterH1, waterH2, water_type)
+    looper = zip(waterO, waterH1, waterH2, water_type, strict=False)
     for Opos, H1pos, H2pos, tip in looper:
         h2o = np.array(
             [
