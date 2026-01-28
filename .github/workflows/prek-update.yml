@@ -1,0 +1,24 @@
+name: Prek Update
+
+on:
+  schedule:
+    - cron: "0 0 1 */3 *"
+  workflow_dispatch:
+
+jobs:
+  prek-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
+      - name: Run prek update
+        run: pixi run -e lint prek update
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: prek update"
+          title: "chore: update pre-commit hooks"
+          body: "Automated prek update."
+          branch: "automation/prek-update"
+          labels: "dependencies"
