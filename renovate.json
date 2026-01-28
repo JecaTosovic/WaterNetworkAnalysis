@@ -1,0 +1,27 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "labels": ["dependencies"],
+  "timezone": "UTC",
+  "schedule": ["before 6am on monday"],
+  "rebaseWhen": "conflicted",
+  "prConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "matchManagers": ["pre-commit"],
+      "groupName": "pre-commit hooks"
+    },
+    {
+      "matchManagers": ["pixi"],
+      "groupName": "pixi dependencies"
+    },
+    {
+      "matchManagers": ["pip_requirements", "pep621"],
+      "groupName": "python dependencies"
+    }
+  ]
+}
