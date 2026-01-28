@@ -4,7 +4,7 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 
 [dependencies]
-python = ">=3.9,<3.13"
+python = ">=3.11,<3.15"
 pip = "*"
 
 [pypi-dependencies]
@@ -15,10 +15,10 @@ scipy = ">=1.0.0"
 
 [feature.test.pypi-dependencies]
 pytest = "*"
-ConservedWaterSearch = "==0.4.1"
-MDAnalysis = "==2.7.0"
-numpy = "==1.26.4"
-scipy = "==1.13.1"
+ConservedWaterSearch = "==0.5.0"
+MDAnalysis = "==2.10.0"
+numpy = "==2.4.1"
+scipy = "==1.17.0"
 
 [feature.lint.pypi-dependencies]
 ruff = "*"
@@ -29,25 +29,25 @@ prek = "*"
 [feature.build.pypi-dependencies]
 build = "*"
 
-[feature.py39.dependencies]
-python = "3.9.*"
-
-[feature.py310.dependencies]
-python = "3.10.*"
-
 [feature.py311.dependencies]
 python = "3.11.*"
 
 [feature.py312.dependencies]
 python = "3.12.*"
 
+[feature.py313.dependencies]
+python = "3.13.*"
+
+[feature.py314.dependencies]
+python = "3.14.*"
+
 [environments]
-py39 = { features = ["py39", "test"] }
-py310 = { features = ["py310", "test"] }
 py311 = { features = ["py311", "test"] }
 py312 = { features = ["py312", "test"] }
-lint = { features = ["py312", "lint", "precommit"] }
-build = { features = ["py312", "build"] }
+py313 = { features = ["py313", "test"] }
+py314 = { features = ["py314", "test"] }
+lint = { features = ["py314", "lint", "precommit"] }
+build = { features = ["py314", "build"] }
 
 [tasks]
 pytest = "pytest"
