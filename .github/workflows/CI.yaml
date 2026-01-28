@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -24,3 +28,13 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.8.1
       - name: Run prek
         run: pixi run -e lint prek run --all-files
+
+  tests_complete:
+    name: All tests
+    if: always()
+    needs: [tests, precommit]
+    runs-on: ubuntu-latest
+    steps:
+      - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+      - name: Done
+        run: echo "Done."
