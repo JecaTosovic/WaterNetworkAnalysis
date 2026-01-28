@@ -786,8 +786,7 @@ def align_trajectory(
         raise Exception(exception_string)
     if align_target_file_name in {trajectory, topology}:
         exception_string = (
-            "align_target_file_name name cannot be the same as "
-            "trajectory or topology"
+            "align_target_file_name name cannot be the same as " "trajectory or topology"
         )
         raise Exception(exception_string)
     if topology is not None:
@@ -1067,9 +1066,9 @@ def read_results_and_make_pdb(
 
 
 def is_pdb_file(filepath: str) -> bool:
-    """
-    Return True if `filepath` is probably a PDB (by extension or by peeking at contents).
-    If it’s binary (like XTC/DCD), this will return False safely.
+    """Return True if `filepath` is probably a PDB.
+
+    If it's binary (like XTC/DCD), this will return False safely.
     """
     ext = os.path.splitext(filepath)[1].lower()
     if ext in {".pdb", ".ent", ".pdb1", ".pdb2"}:
@@ -1077,13 +1076,13 @@ def is_pdb_file(filepath: str) -> bool:
 
     # If extension isn't a known PDB, peek at first few lines:
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             for _ in range(10):
                 line = next(f)
                 if line.startswith(("ATOM  ", "HETATM", "HEADER", "TITLE")):
                     return True
-    except (UnicodeDecodeError, IOError, StopIteration):
-        # If it fails to decode (binary), or can't open, it’s not a PDB.
+    except (UnicodeDecodeError, OSError, StopIteration):
+        # If it fails to decode (binary), or can't open, it's not a PDB.
         return False
 
     return False

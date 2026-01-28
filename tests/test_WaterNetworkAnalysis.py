@@ -5,8 +5,8 @@ import os
 
 import MDAnalysis as mda
 import numpy as np
-import pytest
 import numpy.testing as npt
+import pytest
 
 from WaterNetworkAnalysis import (
     align_trajectory,
