@@ -14,7 +14,7 @@ jobs:
         pixi-env: ["py39", "py310", "py311", "py312"]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@v0.8.1
       - name: Run tests
@@ -23,7 +23,7 @@ jobs:
   precommit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@v0.8.1
       - name: Run prek
