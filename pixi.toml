@@ -4,21 +4,17 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 
 [dependencies]
-python = ">=3.11,<3.15"
+python = ">=3.10,<3.15"
 pip = "*"
 
 [pypi-dependencies]
-ConservedWaterSearch = ">=0.1.0"
-MDAnalysis = ">=2.4.0"
-numpy = ">=1.22"
-scipy = ">=1.0.0"
+ConservedWaterSearch = "*"
+MDAnalysis = "*"
+numpy = ">=2.0"
+scipy = "*"
 
 [feature.test.pypi-dependencies]
 pytest = "*"
-ConservedWaterSearch = "==0.5.1"
-MDAnalysis = "==2.10.0"
-numpy = "==2.4.1"
-scipy = "==1.17.0"
 
 [feature.lint.pypi-dependencies]
 ruff = "*"
@@ -28,6 +24,9 @@ prek = "*"
 
 [feature.build.pypi-dependencies]
 build = "*"
+
+[feature.py310.dependencies]
+python = "3.10.*"
 
 [feature.py311.dependencies]
 python = "3.11.*"
@@ -42,6 +41,7 @@ python = "3.13.*"
 python = "3.14.*"
 
 [environments]
+py310 = { features = ["py310", "test"] }
 py311 = { features = ["py311", "test"] }
 py312 = { features = ["py312", "test"] }
 py313 = { features = ["py313", "test"] }

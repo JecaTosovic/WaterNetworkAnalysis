@@ -36,13 +36,13 @@ PyMOL plugin installation
 
 This guide provides detailed installation instructions for Linux, Mac,
 and Windows users. We recommend using `conda` or `mamba` to create a new
-environment with at least Python 3.9.
+environment with at least Python 3.10.
 
 Note that PyMOL which can be downloaded from the `PyMOL website
 <https://pymol.org/2/>`_ comes with python 3.7 which is not supported by
 WaterNetworkAnalysis or ConservedWaterSearch. For this reason users
 will have to install `mamba/conda` and create a new environment with
-python version greater or equal to 3.9 and install PyMOL in that environment.
+python version greater or equal to 3.10 and install PyMOL in that environment.
 The plugin has been tested with PyMOL version > 2.5.0.
 
 Prerequisites
@@ -67,7 +67,7 @@ Installation Steps
 
      .. code-block:: bash
 
-        conda create -n myenv python=3.9
+        conda create -n myenv python=3.10
 
    Replace ``myenv`` with your preferred environment name.
 
