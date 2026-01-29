@@ -1,4 +1,4 @@
-ConservedWaterSearch>=0.5.0
+ConservedWaterSearch>=0.5.1
 MDAnalysis>=2.4.0
 numpy>=2.0.0
 scipy>=1.0.0
