@@ -1,5 +1,4 @@
-"""Unit and regression test for the WaterNetworkAnalysis package.
-"""
+"""Unit and regression test for the WaterNetworkAnalysis package."""
 
 import os
 from pathlib import Path
@@ -38,7 +37,7 @@ def _cleanup_generated_files():
 
 
 @pytest.fixture(autouse=True)
-def cleanup_generated_files():
+def _cleanup_generated_files_fixture():
     _cleanup_generated_files()
     yield
     _cleanup_generated_files()

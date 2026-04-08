@@ -786,7 +786,7 @@ def align_trajectory(
         raise Exception(exception_string)
     if align_target_file_name in {trajectory, topology}:
         exception_string = (
-            "align_target_file_name name cannot be the same as " "trajectory or topology"
+            "align_target_file_name name cannot be the same as trajectory or topology"
         )
         raise Exception(exception_string)
     if topology is not None:
