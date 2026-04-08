@@ -2,6 +2,7 @@
 """
 
 import os
+from pathlib import Path
 
 import MDAnalysis as mda
 import numpy as np
@@ -16,6 +17,31 @@ from WaterNetworkAnalysis import (
     get_selection_string_from_resnums,
     make_results_pdb_MDA,
 )
+
+GENERATED_TEST_FILES = (
+    "test.pdb",
+    "water.dx",
+    "aligned_trajectory.xtc",
+    "align.pdb",
+    "probis",
+    "tests/data/.testtrjgromacs.xtc_offsets.npz",
+    "tests/data/.testtrjgromacs.xtc_offsets.lock",
+    "tests/data/.testalignedtrj.xtc_offsets.npz",
+    "tests/data/.testalignedtrj.xtc_offsets.lock",
+    "tests/data/testtrjgromacs_0.xtc",
+)
+
+
+def _cleanup_generated_files():
+    for path in GENERATED_TEST_FILES:
+        Path(path).unlink(missing_ok=True)
+
+
+@pytest.fixture(autouse=True)
+def cleanup_generated_files():
+    _cleanup_generated_files()
+    yield
+    _cleanup_generated_files()
 
 
 def test_make_results_pdb_MDA():
@@ -48,7 +74,6 @@ def test_make_results_pdb_MDA():
         output_fname="test.pdb",
     )
     assert os.path.isfile("test.pdb")
-    os.remove("test.pdb")
 
 
 def test_get_center_of_selection():
@@ -57,7 +82,6 @@ def test_get_center_of_selection():
     sel = u.select_atoms("resid 123")
     cc = get_center_of_selection(get_selection_string_from_resnums([123]), "test.pdb")
     npt.assert_allclose(cc, sel.center(None))
-    os.remove("test.pdb")
 
 
 def test_calculate_oxygen_density_map():
@@ -68,9 +92,6 @@ def test_calculate_oxygen_density_map():
         trjfname,
         topfname,
     )
-    os.remove("water.dx")
-    os.remove("tests/data/.testtrjgromacs.xtc_offsets.npz")
-    os.remove("tests/data/.testtrjgromacs.xtc_offsets.lock")
 
 
 def test_extract_waters_from_trajectory():
@@ -131,9 +152,6 @@ def test_align_mda():
         align_selection="protein",
         topology="tests/data/testtopgromacs.tpr",
     )
-    # os.remove("tests/data/testtrjgromacs_0.xtc")
-    os.remove("aligned_trajectory.xtc")
-    os.remove("align.pdb")
 
 
 def test_align_mda_every():
@@ -147,9 +165,6 @@ def test_align_mda_every():
         topology="tests/data/testtopgromacs.tpr",
         every=2,
     )
-    # os.remove("tests/data/testtrjgromacs_0.xtc")
-    os.remove("aligned_trajectory.xtc")
-    os.remove("align.pdb")
 
 
 @pytest.mark.xfail(reason="ProBiS alignment requires ProBiS installation")
@@ -163,10 +178,6 @@ def test_align_probis():
         align_selection="protein",
         topology="tests/data/testtopgromacs.tpr",
     )
-    # os.remove("tests/data/testtrjgromacs_0.xtc")
-    os.remove("aligned_trajectory.xtc")
-    os.remove("probis")
-    os.remove("align.pdb")
 
 
 def test_density_map_units():
