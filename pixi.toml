@@ -4,7 +4,7 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 
 [dependencies]
-python = ">=3.10,<3.15"
+python = ">=3.15,<3.16"
 pip = "*"
 
 [pypi-dependencies]
@@ -26,19 +26,19 @@ prek = "*"
 build = "*"
 
 [feature.py310.dependencies]
-python = "3.10.*"
+python = "3.15.*"
 
 [feature.py311.dependencies]
-python = "3.11.*"
+python = "3.15.*"
 
 [feature.py312.dependencies]
-python = "3.12.*"
+python = "3.15.*"
 
 [feature.py313.dependencies]
-python = "3.13.*"
+python = "3.15.*"
 
 [feature.py314.dependencies]
-python = "3.14.*"
+python = "3.15.*"
 
 [environments]
 py310 = { features = ["py310", "test"] }
